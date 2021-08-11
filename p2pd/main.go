@@ -103,6 +103,7 @@ func main() {
 	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
 	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
 	forceReachabilityPrivate := flag.Bool("forceReachabilityPrivate", false, "Set up ForceReachability as private for autonat")
+	idleTimeout := flag.Duration("idleTimeout", 0, "if this flag has as positive value the daemon will kill itself if no persistent conncetions are open in the given time interval")
 
 	flag.Parse()
 
@@ -376,6 +377,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if *idleTimeout > 0 {
+		d.KillOnTimeout(*idleTimeout)
+	}
+
 	if c.PubSub.Enabled {
 		if c.PubSub.GossipSubHeartbeat.Interval > 0 {
 			ps.GossipSubHeartbeatInterval = c.PubSub.GossipSubHeartbeat.Interval
@@ -421,5 +426,7 @@ func main() {
 		go func() { log.Println(http.ListenAndServe(c.MetricsAddress, nil)) }()
 	}
 
-	select {}
+	if err := d.Serve(); err != nil {
+		log.Fatal(err)
+	}
 }
