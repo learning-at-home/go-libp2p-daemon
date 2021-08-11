@@ -7,6 +7,7 @@ import (
 	"io"
 	"net"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/libp2p/go-libp2p-core/peer"
 
 	ggio "github.com/gogo/protobuf/io"
@@ -125,17 +126,17 @@ func (c *Client) NewStream(peer peer.ID, protos []string) (*StreamInfo, io.ReadW
 
 // Close stops the listener address.
 func (c *Client) Close() error {
+	merr := &multierror.Error{}
+
 	if c.listener != nil {
-		if err := c.listener.Close(); err != nil {
-			return err
-		}
+		multierror.Append(merr, c.listener.Close())
 	}
 
 	if c.persistentConnWriter != nil {
-		return c.persistentConnWriter.Close()
+		multierror.Append(merr, c.persistentConnWriter.Close())
 	}
 
-	return nil
+	return merr.ErrorOrNil()
 }
 
 func (c *Client) streamDispatcher() {

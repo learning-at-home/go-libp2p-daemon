@@ -16,7 +16,7 @@ import (
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 )
 
-func (d *Daemon) handleUpgradedConn(r ggio.Reader, unsafeW ggio.Writer) {
+func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.Writer) {
 	var streamHandlers []string
 	defer func() {
 		d.mx.Lock()
@@ -25,7 +25,7 @@ func (d *Daemon) handleUpgradedConn(r ggio.Reader, unsafeW ggio.Writer) {
 		for _, proto := range streamHandlers {
 			p := protocol.ID(proto)
 			d.host.RemoveStreamHandler(p)
-			d.registeredUnaryProtocols[p] = false
+			delete(d.registeredUnaryProtocols, p)
 		}
 	}()
 
@@ -90,7 +90,7 @@ func (d *Daemon) handleUpgradedConn(r ggio.Reader, unsafeW ggio.Writer) {
 
 		case *pb.PersistentConnectionRequest_UnaryResponse:
 			go func() {
-				resp := d.doSendReponseToRemote(&req)
+				resp := d.sendReponseToRemote(&req)
 				if err := w.WriteMsg(resp); err != nil {
 					log.Debugw("error reading message", "error", err)
 					return
@@ -194,27 +194,27 @@ func exchangeMessages(ctx context.Context, s network.Stream, req *pb.PersistentC
 	return rc
 }
 
-// awaitReadFail writers to a semaphor channel if the given io.Reader fails to
+// notifyWhenClosed writers to a semaphor channel if the given io.Reader fails to
 // read before the context was cancelled
-func awaitReadFail(ctx context.Context, r io.Reader) <-chan struct{} {
-	semaphor := make(chan struct{})
+func notifyWhenClosed(ctx context.Context, r io.Reader) <-chan struct{} {
+	event := make(chan struct{})
 
 	go func() {
-		defer close(semaphor)
+		defer close(event)
 
 		buff := make([]byte, 1)
 		if _, err := r.Read(buff); err != nil {
 			select {
-			case semaphor <- struct{}{}:
+			case event <- struct{}{}:
 			case <-ctx.Done():
 			}
 		}
 	}()
 
-	return semaphor
+	return event
 }
 
-// getPersistentStreamHandler returns a lib-p2p stream handler tied to a
+// getPersistentStreamHandler returns a libp2p stream handler tied to a
 // given persistent client stream
 func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandler {
 	return func(s network.Stream) {
@@ -223,6 +223,11 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 		req := &pb.PersistentConnectionRequest{}
 		if err := ggio.NewDelimitedReader(s, network.MessageSizeMax).ReadMsg(req); err != nil {
 			log.Debugw("failed to read proto from incoming p2p stream", "error", err)
+			return
+		}
+
+		if req.GetCallUnary() == nil {
+			log.Debug("proto is expected to include callUnary but does not have it")
 			return
 		}
 
@@ -254,7 +259,7 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 		}
 
 		select {
-		case <-awaitReadFail(ctx, s):
+		case <-notifyWhenClosed(ctx, s):
 			if err := cw.WriteMsg(
 				&pb.PersistentConnectionResponse{
 					CallId: callID[:],
@@ -264,9 +269,7 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 				},
 			); err != nil {
 				log.Debugw("failed to write to client", "error", err)
-				return
 			}
-			return
 		case response := <-rc:
 			w := ggio.NewDelimitedWriter(s)
 			if err := w.WriteMsg(response); err != nil {
@@ -276,7 +279,7 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 	}
 }
 
-func (d *Daemon) doSendReponseToRemote(req *pb.PersistentConnectionRequest) *pb.PersistentConnectionResponse {
+func (d *Daemon) sendReponseToRemote(req *pb.PersistentConnectionRequest) *pb.PersistentConnectionResponse {
 	callID, err := uuid.FromBytes(req.CallId)
 	if err != nil {
 		return errorUnaryCallString(
@@ -310,13 +313,7 @@ func (sw *safeWriter) WriteMsg(msg proto.Message) error {
 }
 
 func errorUnaryCall(callID uuid.UUID, err error) *pb.PersistentConnectionResponse {
-	message := err.Error()
-	return &pb.PersistentConnectionResponse{
-		CallId: callID[:],
-		Message: &pb.PersistentConnectionResponse_DaemonError{
-			DaemonError: &pb.DaemonError{Message: &message},
-		},
-	}
+	return errorUnaryCallString(callID, err.Error())
 }
 
 func errorUnaryCallString(callID uuid.UUID, errMsg string) *pb.PersistentConnectionResponse {

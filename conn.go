@@ -147,7 +147,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			}
 
 		case pb.Request_PERSISTENT_CONN_UPGRADE:
-			d.handleUpgradedConn(r, w)
+			d.handlePersistentConn(r, w)
 			return
 
 		default:

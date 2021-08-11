@@ -15,7 +15,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 )
 
-type PersistentConnectionResponseFuture chan *pb.PersistentConnectionResponse
+type persistentConnectionResponseFuture chan *pb.PersistentConnectionResponse
 
 type UnaryHandlerFunc func(context.Context, []byte) ([]byte, error)
 
@@ -73,16 +73,14 @@ func (c *Client) run(r ggio.Reader, w ggio.Writer) {
 
 		case *pb.PersistentConnectionResponse_DaemonError, *pb.PersistentConnectionResponse_CallUnaryResponse, *pb.PersistentConnectionResponse_Cancel, nil:
 			go func() {
-				rC, _ := c.callFutures.LoadOrStore(callID, make(PersistentConnectionResponseFuture))
-				rC.(PersistentConnectionResponseFuture) <- &resp
+				rC, _ := c.callFutures.LoadOrStore(callID, make(persistentConnectionResponseFuture))
+				rC.(persistentConnectionResponseFuture) <- &resp
 			}()
 		}
 	}
 
 }
 
-// getPersistentIO ensures persistent daemon connection and returns
-// readers and writers to it
 func (c *Client) getPersistentWriter() ggio.WriteCloser {
 	c.openPersistentConn.Do(
 		func() {
@@ -91,12 +89,10 @@ func (c *Client) getPersistentWriter() ggio.WriteCloser {
 				panic(err)
 			}
 
-			// write persistent connetion upgrade message to control
 			w := NewSafeWriter(ggio.NewDelimitedWriter(conn))
 			w.WriteMsg(&pb.Request{Type: pb.Request_PERSISTENT_CONN_UPGRADE.Enum()})
 			c.persistentConnWriter = w
 
-			// run persistent stream listener
 			r := ggio.NewDelimitedReader(conn, network.MessageSizeMax)
 			go c.run(r, c.persistentConnWriter)
 
@@ -107,10 +103,10 @@ func (c *Client) getPersistentWriter() ggio.WriteCloser {
 }
 
 func (c *Client) getResponse(callID uuid.UUID) (*pb.PersistentConnectionResponse, error) {
-	rc, _ := c.callFutures.LoadOrStore(callID, make(PersistentConnectionResponseFuture))
+	rc, _ := c.callFutures.LoadOrStore(callID, make(persistentConnectionResponseFuture))
 	defer c.callFutures.Delete(callID)
 
-	response := <-rc.(PersistentConnectionResponseFuture)
+	response := <-rc.(persistentConnectionResponseFuture)
 	if dErr := response.GetDaemonError(); dErr != nil {
 		return nil, newDaemonError(dErr)
 	}

@@ -31,6 +31,7 @@ type Client struct {
 	openPersistentConn   sync.Once
 	persistentConnWriter ggio.WriteCloser
 
+	// callID (uuid.UUID) -> persistentConnectionFuture
 	callFutures   sync.Map
 	unaryHandlers map[protocol.ID]UnaryHandlerFunc
 }
