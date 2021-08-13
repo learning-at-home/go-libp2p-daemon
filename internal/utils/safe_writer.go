@@ -25,6 +25,5 @@ func (sw *safeWriter) WriteMsg(msg proto.Message) error {
 func (sw *safeWriter) Close() error {
 	sw.m.Lock()
 	defer sw.m.Unlock()
-
 	return sw.w.Close()
 }
