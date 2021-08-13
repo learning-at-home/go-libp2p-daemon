@@ -150,7 +150,7 @@ func (d *Daemon) doUnaryCall(ctx context.Context, callID uuid.UUID, req *pb.Pers
 		return response
 
 	case <-ctx.Done():
-		return okCancelled(callID)
+		return okUnaryCallCancelled(callID)
 	}
 }
 
@@ -317,7 +317,7 @@ func okUnaryCallResponse(callID uuid.UUID) *pb.PersistentConnectionResponse {
 	return &pb.PersistentConnectionResponse{CallId: callID[:]}
 }
 
-func okCancelled(callID uuid.UUID) *pb.PersistentConnectionResponse {
+func okUnaryCallCancelled(callID uuid.UUID) *pb.PersistentConnectionResponse {
 	return &pb.PersistentConnectionResponse{
 		CallId: callID[:],
 		Message: &pb.PersistentConnectionResponse_Cancel{
