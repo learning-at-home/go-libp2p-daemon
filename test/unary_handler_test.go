@@ -3,12 +3,14 @@ package test
 import (
 	"context"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"math"
 	"testing"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/protocol"
+	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 )
 
 func TestUnaryCalls(t *testing.T) {
@@ -36,8 +38,10 @@ func TestUnaryCalls(t *testing.T) {
 	t.Run(
 		"test bad request",
 		func(t *testing.T) {
+			var handlerError *p2pclient.P2PHandlerError
+
 			_, err := p2.CallUnaryHandler(context.Background(), peer1ID, proto, float64Bytes(-64))
-			if err == nil {
+			if !errors.As(err, &handlerError) {
 				t.Fatal("remote should have returned error")
 			}
 			t.Logf("remote correctly returned error: '%v'\n", err)
@@ -54,7 +58,7 @@ func TestUnaryCalls(t *testing.T) {
 			result := float64FromBytes(reply)
 			expected := math.Sqrt(64)
 
-			if result != expected {
+			if !almostEqual(result, expected) {
 				t.Fatalf("remote returned unexpected result: %.2f != %.2f", result, expected)
 			}
 
@@ -65,8 +69,10 @@ func TestUnaryCalls(t *testing.T) {
 	t.Run(
 		"test bad proto",
 		func(t *testing.T) {
+			var daemonError *p2pclient.DaemonError
+
 			_, err := p2.CallUnaryHandler(context.Background(), peer1ID, "bad proto", make([]byte, 0))
-			if err == nil {
+			if !errors.As(err, &daemonError) {
 				t.Fatal("expected error")
 			}
 			t.Logf("remote correctly returned error: '%v'\n", err)
@@ -172,4 +178,10 @@ func sqrtHandler(ctx context.Context, data []byte) ([]byte, error) {
 
 	result := math.Sqrt(f)
 	return float64Bytes(result), nil
+}
+
+// Je reprends mon bien où je le trouve
+// https://stackoverflow.com/questions/47969385/go-float-comparison
+func almostEqual(a, b float64) bool {
+	return math.Abs(a-b) <= 1e-9
 }
