@@ -101,12 +101,12 @@ func TestCancellation(t *testing.T) {
 
 	_, err = p2.CallUnaryHandler(ctx, peer1ID, proto, []byte("hi"))
 	if err == nil {
-		t.Fatal("expected error")
+		t.Fatal("handler is expected to be cancelled but finished successfully")
 	}
 }
 
 func TestAddUnaryHandler(t *testing.T) {
-	// create a singe daemon and connect two client to it
+	// create a single daemon and connect two clients to it
 	dmaddr, c1maddr, dir1Closer := getEndpointsMaker(t)(t)
 	_, c2maddr, dir2Closer := getEndpointsMaker(t)(t)
 
@@ -136,7 +136,7 @@ func TestAddUnaryHandler(t *testing.T) {
 	}
 
 	if err := c1.Close(); err != nil {
-		t.Fatal("closing client 1 should not have returned an error")
+		t.Fatal("closing client 1 should not have returned an error", err)
 	}
 
 	time.Sleep(time.Second)
