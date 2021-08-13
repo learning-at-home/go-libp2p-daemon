@@ -208,17 +208,6 @@ func (c *Client) CallUnaryHandler(
 	}
 }
 
-func (c *Client) Cancel(callID uuid.UUID) error {
-	return c.getPersistentWriter().WriteMsg(
-		&pb.PersistentConnectionRequest{
-			CallId: callID[:],
-			Message: &pb.PersistentConnectionRequest_Cancel{
-				Cancel: &pb.Cancel{},
-			},
-		},
-	)
-}
-
 func NewSafeWriter(w ggio.WriteCloser) *safeWriter {
 	return &safeWriter{w: w}
 }

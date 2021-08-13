@@ -103,7 +103,7 @@ func main() {
 	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
 	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
 	forceReachabilityPrivate := flag.Bool("forceReachabilityPrivate", false, "Set up ForceReachability as private for autonat")
-	idleTimeout := flag.Duration("idleTimeout", 0, "if this flag has as positive value the daemon will kill itself if no persistent conncetions are open in the given time interval")
+	idleTimeout := flag.Duration("idleTimeout", 0, "Kills the daemon if no client opens a persistent connection in idleTimeout seconds. The zero value (default) disables this feature")
 
 	flag.Parse()
 
