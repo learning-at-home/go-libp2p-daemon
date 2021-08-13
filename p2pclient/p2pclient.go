@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/libp2p/go-libp2p-core/peer"
-	"github.com/libp2p/go-libp2p-core/protocol"
 
 	ggio "github.com/gogo/protobuf/io"
 	logging "github.com/ipfs/go-log"
@@ -33,7 +32,7 @@ type Client struct {
 
 	// callID (uuid.UUID) -> persistentConnectionFuture
 	callFutures   sync.Map
-	unaryHandlers map[protocol.ID]UnaryHandlerFunc
+	unaryHandlers sync.Map
 }
 
 // NewClient creates a new libp2p daemon client, connecting to a daemon
@@ -41,9 +40,8 @@ type Client struct {
 // listening multi-address at listenMaddr
 func NewClient(controlMaddr, listenMaddr multiaddr.Multiaddr) (*Client, error) {
 	client := &Client{
-		controlMaddr:  controlMaddr,
-		handlers:      make(map[string]StreamHandlerFunc),
-		unaryHandlers: make(map[protocol.ID]UnaryHandlerFunc),
+		controlMaddr: controlMaddr,
+		handlers:     make(map[string]StreamHandlerFunc),
 	}
 
 	if err := client.listen(listenMaddr); err != nil {

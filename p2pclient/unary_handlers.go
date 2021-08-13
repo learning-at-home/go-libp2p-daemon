@@ -3,16 +3,15 @@ package p2pclient
 import (
 	"context"
 	"fmt"
-	"sync"
 
 	"github.com/google/uuid"
 	"github.com/libp2p/go-libp2p-core/network"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p-core/protocol"
+	"github.com/libp2p/go-libp2p-daemon/internal/utils"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
 	ggio "github.com/gogo/protobuf/io"
-	"github.com/gogo/protobuf/proto"
 )
 
 type persistentConnectionResponseFuture chan *pb.PersistentConnectionResponse
@@ -59,7 +58,13 @@ func (c *Client) run(r ggio.Reader, w ggio.Writer) {
 			proto := protocol.ID(*resp.GetRequestHandling().Proto)
 
 			c.mhandlers.Lock()
-			handler, found := c.unaryHandlers[proto]
+			h, found := c.unaryHandlers.Load(proto)
+			handler, ok := h.(UnaryHandlerFunc)
+			if !ok {
+				log.Fatal("could not load handler for %s: failed to cast it to unary handler\n", proto)
+				return
+			}
+
 			if !found {
 				w.WriteMsg(makeErrProtoNotFoundMsg(resp.CallId, string(proto)))
 			}
@@ -89,7 +94,7 @@ func (c *Client) getPersistentWriter() ggio.WriteCloser {
 				panic(err)
 			}
 
-			w := NewSafeWriter(ggio.NewDelimitedWriter(conn))
+			w := utils.NewSafeWriter(ggio.NewDelimitedWriter(conn))
 			w.WriteMsg(&pb.Request{Type: pb.Request_PERSISTENT_CONN_UPGRADE.Enum()})
 			c.persistentConnWriter = w
 
@@ -134,9 +139,7 @@ func (c *Client) AddUnaryHandler(proto protocol.ID, handler UnaryHandlerFunc) er
 		return err
 	}
 
-	c.mhandlers.Lock()
-	c.unaryHandlers[proto] = handler
-	c.mhandlers.Unlock()
+	c.unaryHandlers.Store(proto, handler)
 
 	return nil
 }
@@ -153,10 +156,29 @@ func (c *Client) CallUnaryHandler(
 	callID := uuid.New()
 
 	// both methods don't return any errors
-	cid, _ := callID.MarshalBinary()
-	pid, _ := peerID.MarshalBinary()
+	cid, err := callID.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
+	pid, err := peerID.MarshalBinary()
+	if err != nil {
+		return nil, err
+	}
 
 	done := make(chan struct{})
+	w.WriteMsg(
+		&pb.PersistentConnectionRequest{
+			CallId: cid,
+			Message: &pb.PersistentConnectionRequest_CallUnary{
+				CallUnary: &pb.CallUnaryRequest{
+					Peer:  pid,
+					Proto: (*string)(&proto),
+					Data:  payload,
+				},
+			},
+		},
+	)
+
 	go func() {
 		defer close(done)
 
@@ -172,19 +194,6 @@ func (c *Client) CallUnaryHandler(
 			)
 		}
 	}()
-
-	w.WriteMsg(
-		&pb.PersistentConnectionRequest{
-			CallId: cid,
-			Message: &pb.PersistentConnectionRequest_CallUnary{
-				CallUnary: &pb.CallUnaryRequest{
-					Peer:  pid,
-					Proto: (*string)(&proto),
-					Data:  payload,
-				},
-			},
-		},
-	)
 
 	response, err := c.getResponse(callID)
 	if err != nil {
@@ -217,28 +226,6 @@ func (c *Client) Cancel(callID uuid.UUID) error {
 			},
 		},
 	)
-}
-
-func NewSafeWriter(w ggio.WriteCloser) *safeWriter {
-	return &safeWriter{w: w}
-}
-
-type safeWriter struct {
-	w ggio.WriteCloser
-	m sync.Mutex
-}
-
-func (sw *safeWriter) WriteMsg(msg proto.Message) error {
-	sw.m.Lock()
-	defer sw.m.Unlock()
-	return sw.w.WriteMsg(msg)
-}
-
-func (sw *safeWriter) Close() error {
-	sw.m.Lock()
-	defer sw.m.Unlock()
-
-	return sw.w.Close()
 }
 
 func newDaemonError(dErr *pb.DaemonError) error {

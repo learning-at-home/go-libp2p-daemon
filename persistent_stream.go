@@ -4,19 +4,18 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"sync"
 
 	"github.com/google/uuid"
 	"github.com/libp2p/go-libp2p-core/network"
 	"github.com/libp2p/go-libp2p-core/peer"
 
 	ggio "github.com/gogo/protobuf/io"
-	"github.com/gogo/protobuf/proto"
 	"github.com/libp2p/go-libp2p-core/protocol"
+	"github.com/libp2p/go-libp2p-daemon/internal/utils"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 )
 
-func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.Writer) {
+func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
 	var streamHandlers []string
 	defer func() {
 		d.mx.Lock()
@@ -38,7 +37,7 @@ func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.Writer) {
 
 	d.terminateOnce.Do(func() { go d.awaitTermination() })
 
-	w := &safeWriter{w: unsafeW}
+	w := utils.NewSafeWriter(unsafeW)
 	for {
 		var req pb.PersistentConnectionRequest
 		if err := r.ReadMsg(&req); err != nil {
@@ -299,17 +298,6 @@ func (d *Daemon) sendReponseToRemote(req *pb.PersistentConnectionRequest) *pb.Pe
 	rc.(chan *pb.PersistentConnectionRequest) <- req
 
 	return okUnaryCallResponse(callID)
-}
-
-type safeWriter struct {
-	w ggio.Writer
-	m sync.Mutex
-}
-
-func (sw *safeWriter) WriteMsg(msg proto.Message) error {
-	sw.m.Lock()
-	defer sw.m.Unlock()
-	return sw.w.WriteMsg(msg)
 }
 
 func errorUnaryCall(callID uuid.UUID, err error) *pb.PersistentConnectionResponse {
