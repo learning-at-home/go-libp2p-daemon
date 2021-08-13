@@ -29,18 +29,7 @@ func TestUnaryCalls(t *testing.T) {
 	}
 
 	var proto protocol.ID = "sqrt"
-	if err := p1.AddUnaryHandler(
-		proto,
-		func(ctx context.Context, data []byte) ([]byte, error) {
-			f := float64FromBytes(data)
-			if f < 0 {
-				return nil, fmt.Errorf("can't extract square root from negative")
-			}
-
-			result := math.Sqrt(f)
-			return float64Bytes(result), nil
-		},
-	); err != nil {
+	if err := p1.AddUnaryHandler(proto, sqrtHandler); err != nil {
 		t.Fatal(err)
 	}
 
@@ -63,6 +52,12 @@ func TestUnaryCalls(t *testing.T) {
 				t.Fatal(err)
 			}
 			result := float64FromBytes(reply)
+			expected := math.Sqrt(64)
+
+			if result != expected {
+				t.Fatalf("remote returned unexpected result: %.2f != %.2f", result, expected)
+			}
+
 			t.Logf("remote returned: %f\n", result)
 		},
 	)
@@ -96,8 +91,8 @@ func TestCancellation(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var proto protocol.ID = "sqrt"
-	if err := p1.AddUnaryHandler(proto, sqrtHandler); err != nil {
+	var proto protocol.ID = "slow"
+	if err := p1.AddUnaryHandler(proto, slowHandler); err != nil {
 		t.Fatal(err)
 	}
 
@@ -151,11 +146,6 @@ func TestAddUnaryHandler(t *testing.T) {
 	}
 }
 
-func sqrtHandler(ctx context.Context, data []byte) ([]byte, error) {
-	time.Sleep(time.Second * 30)
-	return nil, nil
-}
-
 func float64FromBytes(bytes []byte) float64 {
 	bits := binary.LittleEndian.Uint64(bytes)
 	float := math.Float64frombits(bits)
@@ -167,4 +157,19 @@ func float64Bytes(float float64) []byte {
 	bytes := make([]byte, 8)
 	binary.LittleEndian.PutUint64(bytes, bits)
 	return bytes
+}
+
+func slowHandler(ctx context.Context, data []byte) ([]byte, error) {
+	time.Sleep(time.Second * 3)
+	return nil, nil
+}
+
+func sqrtHandler(ctx context.Context, data []byte) ([]byte, error) {
+	f := float64FromBytes(data)
+	if f < 0 {
+		return nil, fmt.Errorf("can't extract square root from negative")
+	}
+
+	result := math.Sqrt(f)
+	return float64Bytes(result), nil
 }
