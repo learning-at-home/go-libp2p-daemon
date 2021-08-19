@@ -36,7 +36,7 @@ func TestConcurrentCalls(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	count := 10_000
+	count := 1000
 
 	var wg sync.WaitGroup
 	var m sync.Map
@@ -48,11 +48,11 @@ func TestConcurrentCalls(t *testing.T) {
 
 			reply, err := p2.CallUnaryHandler(context.Background(), peer1ID, proto, float64Bytes(float64(i)))
 			if err != nil {
-				t.Fatalf("failed to call unary %v", err)
+				panic(err)
 			}
 
 			if _, loaded := m.LoadOrStore(float64FromBytes(reply), ""); loaded {
-				t.Fatalf("colissions")
+				panic(err)
 			}
 		}(i)
 	}
