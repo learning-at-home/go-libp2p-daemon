@@ -36,7 +36,7 @@ func TestConcurrentCalls(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	count := 1000
+	count := 100
 
 	var wg sync.WaitGroup
 	var m sync.Map
