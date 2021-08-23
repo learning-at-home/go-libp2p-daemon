@@ -279,6 +279,7 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 func (d *Daemon) sendReponseToRemote(req *pb.PersistentConnectionRequest) {
 	callID, err := uuid.FromBytes(req.CallId)
 	if err != nil {
+		log.Debugf("failed to unmarshal call id from bytes: %v\n", err)
 		return
 	}
 
