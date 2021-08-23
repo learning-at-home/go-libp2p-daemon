@@ -279,13 +279,13 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 func (d *Daemon) sendReponseToRemote(req *pb.PersistentConnectionRequest) {
 	callID, err := uuid.FromBytes(req.CallId)
 	if err != nil {
-		log.Debugf("failed to unmarshal call id from bytes: %v\n", err)
+		log.Debugf("failed to unmarshal call id from bytes: %v", err)
 		return
 	}
 
 	rc, found := d.responseWaiters.Load(callID)
 	if !found {
-		log.Debugf("could not find request awaiting response for following call id: %s\n", callID.String())
+		log.Debugf("could not find request awaiting response for following call id: %s", callID.String())
 		return
 	}
 
