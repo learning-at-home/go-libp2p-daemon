@@ -284,6 +284,7 @@ func (d *Daemon) sendReponseToRemote(req *pb.PersistentConnectionRequest) {
 
 	rc, found := d.responseWaiters.Load(callID)
 	if !found {
+		log.Debugf("could not find request awaiting response for following call id: %s\n", callID.String())
 		return
 	}
 
