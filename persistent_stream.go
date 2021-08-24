@@ -138,7 +138,9 @@ func (d *Daemon) doUnaryCall(ctx context.Context, callID uuid.UUID, req *pb.Pers
 		pid,
 		protocol.ID(*req.GetCallUnary().Proto),
 	)
-	if err != nil {
+	if ctx.Err() != nil {
+		return okUnaryCallCancelled(callID)
+	} else if err != nil {
 		return errorUnaryCall(callID, err)
 	}
 	defer remoteStream.Close()
