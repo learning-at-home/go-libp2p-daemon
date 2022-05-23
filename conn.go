@@ -2,14 +2,17 @@ package p2pd
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net"
+	"sync"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/network"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p-core/protocol"
 
+	"github.com/libp2p/go-libp2p-daemon/internal/utils"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
 	ggio "github.com/gogo/protobuf/io"
@@ -147,7 +150,8 @@ func (d *Daemon) handleConn(c net.Conn) {
 			}
 
 		case pb.Request_PERSISTENT_CONN_UPGRADE:
-			d.handlePersistentConn(r, w)
+			var clearUp sync.Once
+			d.handlePersistentConn(r, w, &clearUp)
 			return
 
 		default:
@@ -271,10 +275,15 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 		p := protocol.ID(sp)
 		_, ok := d.handlers[p]
 		if !ok {
+			d.handlers[p] = utils.NewRoundRobin()
+			d.handlers[p].Push(maddr)
 			d.host.SetStreamHandler(p, d.handleStream)
+		} else if !*req.StreamHandler.Balanced {
+			return errorResponseString(fmt.Sprintf("handler for protocol %s already set", p))
+		} else {
+			d.handlers[p].Push(maddr)
 		}
 		log.Debugw("set stream handler", "protocol", sp, "to", maddr)
-		d.handlers[p] = maddr
 	}
 
 	return okResponse()

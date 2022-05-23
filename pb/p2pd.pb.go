@@ -21,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type Request_Type int32
 
@@ -348,7 +348,7 @@ func (m *Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Request.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -450,7 +450,7 @@ func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Response.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -545,7 +545,7 @@ func (m *PersistentConnectionRequest) XXX_Marshal(b []byte, deterministic bool) 
 		return xxx_messageInfo_PersistentConnectionRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -571,16 +571,16 @@ type isPersistentConnectionRequest_Message interface {
 }
 
 type PersistentConnectionRequest_AddUnaryHandler struct {
-	AddUnaryHandler *AddUnaryHandlerRequest `protobuf:"bytes,2,opt,name=addUnaryHandler,oneof" json:"addUnaryHandler,omitempty"`
+	AddUnaryHandler *AddUnaryHandlerRequest `protobuf:"bytes,2,opt,name=addUnaryHandler,oneof"`
 }
 type PersistentConnectionRequest_CallUnary struct {
-	CallUnary *CallUnaryRequest `protobuf:"bytes,3,opt,name=callUnary,oneof" json:"callUnary,omitempty"`
+	CallUnary *CallUnaryRequest `protobuf:"bytes,3,opt,name=callUnary,oneof"`
 }
 type PersistentConnectionRequest_UnaryResponse struct {
-	UnaryResponse *CallUnaryResponse `protobuf:"bytes,4,opt,name=unaryResponse,oneof" json:"unaryResponse,omitempty"`
+	UnaryResponse *CallUnaryResponse `protobuf:"bytes,4,opt,name=unaryResponse,oneof"`
 }
 type PersistentConnectionRequest_Cancel struct {
-	Cancel *Cancel `protobuf:"bytes,5,opt,name=cancel,oneof" json:"cancel,omitempty"`
+	Cancel *Cancel `protobuf:"bytes,5,opt,name=cancel,oneof"`
 }
 
 func (*PersistentConnectionRequest_AddUnaryHandler) isPersistentConnectionRequest_Message() {}
@@ -630,14 +630,116 @@ func (m *PersistentConnectionRequest) GetCancel() *Cancel {
 	return nil
 }
 
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*PersistentConnectionRequest) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*PersistentConnectionRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _PersistentConnectionRequest_OneofMarshaler, _PersistentConnectionRequest_OneofUnmarshaler, _PersistentConnectionRequest_OneofSizer, []interface{}{
 		(*PersistentConnectionRequest_AddUnaryHandler)(nil),
 		(*PersistentConnectionRequest_CallUnary)(nil),
 		(*PersistentConnectionRequest_UnaryResponse)(nil),
 		(*PersistentConnectionRequest_Cancel)(nil),
 	}
+}
+
+func _PersistentConnectionRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*PersistentConnectionRequest)
+	// message
+	switch x := m.Message.(type) {
+	case *PersistentConnectionRequest_AddUnaryHandler:
+		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.AddUnaryHandler); err != nil {
+			return err
+		}
+	case *PersistentConnectionRequest_CallUnary:
+		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.CallUnary); err != nil {
+			return err
+		}
+	case *PersistentConnectionRequest_UnaryResponse:
+		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.UnaryResponse); err != nil {
+			return err
+		}
+	case *PersistentConnectionRequest_Cancel:
+		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Cancel); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("PersistentConnectionRequest.Message has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _PersistentConnectionRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*PersistentConnectionRequest)
+	switch tag {
+	case 2: // message.addUnaryHandler
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(AddUnaryHandlerRequest)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionRequest_AddUnaryHandler{msg}
+		return true, err
+	case 3: // message.callUnary
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(CallUnaryRequest)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionRequest_CallUnary{msg}
+		return true, err
+	case 4: // message.unaryResponse
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(CallUnaryResponse)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionRequest_UnaryResponse{msg}
+		return true, err
+	case 5: // message.cancel
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Cancel)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionRequest_Cancel{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _PersistentConnectionRequest_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*PersistentConnectionRequest)
+	// message
+	switch x := m.Message.(type) {
+	case *PersistentConnectionRequest_AddUnaryHandler:
+		s := proto.Size(x.AddUnaryHandler)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PersistentConnectionRequest_CallUnary:
+		s := proto.Size(x.CallUnary)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PersistentConnectionRequest_UnaryResponse:
+		s := proto.Size(x.UnaryResponse)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PersistentConnectionRequest_Cancel:
+		s := proto.Size(x.Cancel)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
 }
 
 type PersistentConnectionResponse struct {
@@ -667,7 +769,7 @@ func (m *PersistentConnectionResponse) XXX_Marshal(b []byte, deterministic bool)
 		return xxx_messageInfo_PersistentConnectionResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -693,16 +795,16 @@ type isPersistentConnectionResponse_Message interface {
 }
 
 type PersistentConnectionResponse_CallUnaryResponse struct {
-	CallUnaryResponse *CallUnaryResponse `protobuf:"bytes,2,opt,name=callUnaryResponse,oneof" json:"callUnaryResponse,omitempty"`
+	CallUnaryResponse *CallUnaryResponse `protobuf:"bytes,2,opt,name=callUnaryResponse,oneof"`
 }
 type PersistentConnectionResponse_RequestHandling struct {
-	RequestHandling *CallUnaryRequest `protobuf:"bytes,3,opt,name=requestHandling,oneof" json:"requestHandling,omitempty"`
+	RequestHandling *CallUnaryRequest `protobuf:"bytes,3,opt,name=requestHandling,oneof"`
 }
 type PersistentConnectionResponse_DaemonError struct {
-	DaemonError *DaemonError `protobuf:"bytes,4,opt,name=daemonError,oneof" json:"daemonError,omitempty"`
+	DaemonError *DaemonError `protobuf:"bytes,4,opt,name=daemonError,oneof"`
 }
 type PersistentConnectionResponse_Cancel struct {
-	Cancel *Cancel `protobuf:"bytes,5,opt,name=cancel,oneof" json:"cancel,omitempty"`
+	Cancel *Cancel `protobuf:"bytes,5,opt,name=cancel,oneof"`
 }
 
 func (*PersistentConnectionResponse_CallUnaryResponse) isPersistentConnectionResponse_Message() {}
@@ -752,14 +854,116 @@ func (m *PersistentConnectionResponse) GetCancel() *Cancel {
 	return nil
 }
 
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*PersistentConnectionResponse) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*PersistentConnectionResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _PersistentConnectionResponse_OneofMarshaler, _PersistentConnectionResponse_OneofUnmarshaler, _PersistentConnectionResponse_OneofSizer, []interface{}{
 		(*PersistentConnectionResponse_CallUnaryResponse)(nil),
 		(*PersistentConnectionResponse_RequestHandling)(nil),
 		(*PersistentConnectionResponse_DaemonError)(nil),
 		(*PersistentConnectionResponse_Cancel)(nil),
 	}
+}
+
+func _PersistentConnectionResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*PersistentConnectionResponse)
+	// message
+	switch x := m.Message.(type) {
+	case *PersistentConnectionResponse_CallUnaryResponse:
+		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.CallUnaryResponse); err != nil {
+			return err
+		}
+	case *PersistentConnectionResponse_RequestHandling:
+		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.RequestHandling); err != nil {
+			return err
+		}
+	case *PersistentConnectionResponse_DaemonError:
+		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.DaemonError); err != nil {
+			return err
+		}
+	case *PersistentConnectionResponse_Cancel:
+		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Cancel); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("PersistentConnectionResponse.Message has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _PersistentConnectionResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*PersistentConnectionResponse)
+	switch tag {
+	case 2: // message.callUnaryResponse
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(CallUnaryResponse)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionResponse_CallUnaryResponse{msg}
+		return true, err
+	case 3: // message.requestHandling
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(CallUnaryRequest)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionResponse_RequestHandling{msg}
+		return true, err
+	case 4: // message.daemonError
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(DaemonError)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionResponse_DaemonError{msg}
+		return true, err
+	case 5: // message.cancel
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(Cancel)
+		err := b.DecodeMessage(msg)
+		m.Message = &PersistentConnectionResponse_Cancel{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _PersistentConnectionResponse_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*PersistentConnectionResponse)
+	// message
+	switch x := m.Message.(type) {
+	case *PersistentConnectionResponse_CallUnaryResponse:
+		s := proto.Size(x.CallUnaryResponse)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PersistentConnectionResponse_RequestHandling:
+		s := proto.Size(x.RequestHandling)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PersistentConnectionResponse_DaemonError:
+		s := proto.Size(x.DaemonError)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *PersistentConnectionResponse_Cancel:
+		s := proto.Size(x.Cancel)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
 }
 
 type IdentifyResponse struct {
@@ -784,7 +988,7 @@ func (m *IdentifyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_IdentifyResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -840,7 +1044,7 @@ func (m *ConnectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return xxx_messageInfo_ConnectRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -903,7 +1107,7 @@ func (m *StreamOpenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_StreamOpenRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -946,6 +1150,7 @@ func (m *StreamOpenRequest) GetTimeout() int64 {
 type StreamHandlerRequest struct {
 	Addr                 []byte   `protobuf:"bytes,1,req,name=addr" json:"addr,omitempty"`
 	Proto                []string `protobuf:"bytes,2,rep,name=proto" json:"proto,omitempty"`
+	Balanced             *bool    `protobuf:"varint,3,req,name=balanced" json:"balanced,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -965,7 +1170,7 @@ func (m *StreamHandlerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_StreamHandlerRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -998,6 +1203,13 @@ func (m *StreamHandlerRequest) GetProto() []string {
 	return nil
 }
 
+func (m *StreamHandlerRequest) GetBalanced() bool {
+	if m != nil && m.Balanced != nil {
+		return *m.Balanced
+	}
+	return false
+}
+
 type ErrorResponse struct {
 	Msg                  *string  `protobuf:"bytes,1,req,name=msg" json:"msg,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1019,7 +1231,7 @@ func (m *ErrorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_ErrorResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1068,7 +1280,7 @@ func (m *StreamInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_StreamInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1135,7 +1347,7 @@ func (m *DHTRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_DHTRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1226,7 +1438,7 @@ func (m *DHTResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_DHTResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1288,7 +1500,7 @@ func (m *PeerInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PeerInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1345,7 +1557,7 @@ func (m *ConnManagerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return xxx_messageInfo_ConnManagerRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1413,7 +1625,7 @@ func (m *DisconnectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_DisconnectRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1462,7 +1674,7 @@ func (m *PSRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PSRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1528,7 +1740,7 @@ func (m *PSMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PSMessage.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1611,7 +1823,7 @@ func (m *PSResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PSResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1667,7 +1879,7 @@ func (m *CallUnaryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_CallUnaryRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1731,7 +1943,7 @@ func (m *CallUnaryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_CallUnaryResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1757,10 +1969,10 @@ type isCallUnaryResponse_Result interface {
 }
 
 type CallUnaryResponse_Response struct {
-	Response []byte `protobuf:"bytes,1,opt,name=response,oneof" json:"response,omitempty"`
+	Response []byte `protobuf:"bytes,1,opt,name=response,oneof"`
 }
 type CallUnaryResponse_Error struct {
-	Error []byte `protobuf:"bytes,2,opt,name=error,oneof" json:"error,omitempty"`
+	Error []byte `protobuf:"bytes,2,opt,name=error,oneof"`
 }
 
 func (*CallUnaryResponse_Response) isCallUnaryResponse_Result() {}
@@ -1787,16 +1999,75 @@ func (m *CallUnaryResponse) GetError() []byte {
 	return nil
 }
 
-// XXX_OneofWrappers is for the internal use of the proto package.
-func (*CallUnaryResponse) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*CallUnaryResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _CallUnaryResponse_OneofMarshaler, _CallUnaryResponse_OneofUnmarshaler, _CallUnaryResponse_OneofSizer, []interface{}{
 		(*CallUnaryResponse_Response)(nil),
 		(*CallUnaryResponse_Error)(nil),
 	}
 }
 
+func _CallUnaryResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*CallUnaryResponse)
+	// result
+	switch x := m.Result.(type) {
+	case *CallUnaryResponse_Response:
+		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
+		_ = b.EncodeRawBytes(x.Response)
+	case *CallUnaryResponse_Error:
+		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
+		_ = b.EncodeRawBytes(x.Error)
+	case nil:
+	default:
+		return fmt.Errorf("CallUnaryResponse.Result has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _CallUnaryResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*CallUnaryResponse)
+	switch tag {
+	case 1: // result.response
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		x, err := b.DecodeRawBytes(true)
+		m.Result = &CallUnaryResponse_Response{x}
+		return true, err
+	case 2: // result.error
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		x, err := b.DecodeRawBytes(true)
+		m.Result = &CallUnaryResponse_Error{x}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _CallUnaryResponse_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*CallUnaryResponse)
+	// result
+	switch x := m.Result.(type) {
+	case *CallUnaryResponse_Response:
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(len(x.Response)))
+		n += len(x.Response)
+	case *CallUnaryResponse_Error:
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(len(x.Error)))
+		n += len(x.Error)
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
 type AddUnaryHandlerRequest struct {
 	Proto                *string  `protobuf:"bytes,1,req,name=proto" json:"proto,omitempty"`
+	Balanced             *bool    `protobuf:"varint,2,req,name=balanced" json:"balanced,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1816,7 +2087,7 @@ func (m *AddUnaryHandlerRequest) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_AddUnaryHandlerRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1842,6 +2113,13 @@ func (m *AddUnaryHandlerRequest) GetProto() string {
 	return ""
 }
 
+func (m *AddUnaryHandlerRequest) GetBalanced() bool {
+	if m != nil && m.Balanced != nil {
+		return *m.Balanced
+	}
+	return false
+}
+
 type DaemonError struct {
 	Message              *string  `protobuf:"bytes,1,opt,name=message" json:"message,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1863,7 +2141,7 @@ func (m *DaemonError) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_DaemonError.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1909,7 +2187,7 @@ func (m *Cancel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Cancel.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
+		n, err := m.MarshalTo(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1963,101 +2241,103 @@ func init() {
 func init() { proto.RegisterFile("p2pd.proto", fileDescriptor_7333f0e9b622f7df) }
 
 var fileDescriptor_7333f0e9b622f7df = []byte{
-	// 1405 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0xcb, 0x6e, 0xdb, 0xc6,
-	0x1a, 0x16, 0x49, 0x5d, 0x7f, 0xc9, 0x32, 0x3d, 0x71, 0x1c, 0x26, 0xf1, 0xc9, 0xf1, 0x21, 0x90,
-	0x13, 0xe7, 0x72, 0x8c, 0x53, 0xb7, 0x05, 0xd2, 0x02, 0x2d, 0xaa, 0x0b, 0x63, 0x31, 0xb1, 0x25,
-	0x61, 0x48, 0xa5, 0xc8, 0x4a, 0x60, 0xc4, 0x89, 0x23, 0xd4, 0x26, 0x15, 0x92, 0x6a, 0xe1, 0x07,
-	0xe9, 0xbe, 0xab, 0x02, 0x5d, 0x77, 0xd1, 0xf6, 0x0d, 0xba, 0xec, 0x23, 0x14, 0xde, 0x75, 0xd3,
-	0x67, 0x28, 0xe6, 0xc6, 0x8b, 0xac, 0xa4, 0x41, 0x77, 0xf3, 0xcf, 0x7c, 0xff, 0x65, 0xbe, 0xf9,
-	0x67, 0xbe, 0x01, 0x58, 0x1c, 0x2e, 0xfc, 0x83, 0x45, 0x14, 0x26, 0x21, 0xaa, 0xf1, 0xf1, 0x4b,
-	0xf3, 0xb2, 0x0c, 0x35, 0x4c, 0xde, 0x2c, 0x49, 0x9c, 0xa0, 0xfb, 0x50, 0x4e, 0x2e, 0x16, 0xc4,
-	0x50, 0xf6, 0xd4, 0xfd, 0xf6, 0xe1, 0xf5, 0x03, 0x81, 0x39, 0x10, 0xeb, 0x07, 0xee, 0xc5, 0x82,
-	0x60, 0x06, 0x41, 0x1f, 0x40, 0x6d, 0x16, 0x06, 0x01, 0x99, 0x25, 0x86, 0xba, 0xa7, 0xec, 0x37,
-	0x0f, 0x6f, 0xa4, 0xe8, 0x1e, 0x9f, 0x17, 0x4e, 0x58, 0xe2, 0xd0, 0xa7, 0x00, 0x71, 0x12, 0x11,
-	0xef, 0x7c, 0xb4, 0x20, 0x81, 0xa1, 0x31, 0xaf, 0x5b, 0xa9, 0x97, 0x93, 0x2e, 0x49, 0xc7, 0x1c,
-	0x1a, 0xf5, 0x60, 0x83, 0x5b, 0x03, 0x2f, 0xf0, 0xcf, 0x48, 0x64, 0x94, 0x99, 0xfb, 0xbf, 0x56,
-	0xdc, 0xc5, 0xaa, 0x8c, 0x50, 0xf4, 0x41, 0x77, 0x41, 0xf3, 0x5f, 0x27, 0x46, 0x85, 0xb9, 0x5e,
-	0x4b, 0x5d, 0xfb, 0x03, 0x57, 0x3a, 0xd0, 0x75, 0xf4, 0x19, 0x34, 0x69, 0xc9, 0x27, 0x5e, 0xe0,
-	0x9d, 0x92, 0xc8, 0xa8, 0x32, 0xf8, 0xed, 0xc2, 0xf6, 0xc4, 0x9a, 0x74, 0xcb, 0xe3, 0xe9, 0x36,
-	0xfd, 0x79, 0x2c, 0xc9, 0xa9, 0xad, 0x6c, 0xb3, 0x9f, 0x2e, 0xa5, 0xdb, 0xcc, 0xd0, 0xe8, 0x01,
-	0x54, 0x17, 0xcb, 0x97, 0xf1, 0xf2, 0xa5, 0x51, 0x67, 0x7e, 0x28, 0xf5, 0x1b, 0x3b, 0x12, 0x2f,
-	0x10, 0xe6, 0x0f, 0x0a, 0x94, 0xe9, 0x81, 0xa0, 0x16, 0xd4, 0xed, 0xbe, 0x35, 0x74, 0xed, 0x27,
-	0x2f, 0xf4, 0x12, 0x6a, 0x42, 0xad, 0x37, 0x1a, 0x0e, 0xad, 0x9e, 0xab, 0x2b, 0x68, 0x13, 0x9a,
-	0x8e, 0x8b, 0xad, 0xce, 0xc9, 0x74, 0x34, 0xb6, 0x86, 0xba, 0x8a, 0x10, 0xb4, 0xc5, 0xc4, 0xa0,
-	0x33, 0xec, 0x1f, 0x5b, 0x58, 0xd7, 0x50, 0x0d, 0xb4, 0xfe, 0xc0, 0xd5, 0xcb, 0xa8, 0x0d, 0x70,
-	0x6c, 0x3b, 0xee, 0x74, 0x6c, 0x59, 0xd8, 0xd1, 0x2b, 0xd4, 0x9b, 0x86, 0x3a, 0xe9, 0x0c, 0x3b,
-	0x47, 0x16, 0xd6, 0xab, 0x14, 0xd0, 0xb7, 0x1d, 0x19, 0xbe, 0x86, 0x00, 0xaa, 0xe3, 0x49, 0xd7,
-	0x99, 0x74, 0xf5, 0x3a, 0xba, 0x0d, 0x37, 0xc6, 0x16, 0x76, 0x6c, 0xc7, 0xb5, 0x86, 0xee, 0x94,
-	0x62, 0xa6, 0x93, 0xf1, 0x11, 0xee, 0xf4, 0x2d, 0xbd, 0x61, 0xfe, 0xa1, 0x42, 0x1d, 0x93, 0x78,
-	0x11, 0x06, 0x31, 0x41, 0x0f, 0x0a, 0x5d, 0xb6, 0x93, 0xeb, 0x32, 0x0e, 0xc8, 0xb7, 0xd9, 0x23,
-	0xa8, 0x90, 0x28, 0x0a, 0x23, 0xd1, 0x64, 0x19, 0xd8, 0xa2, 0xb3, 0xd2, 0x03, 0x73, 0x10, 0xfa,
-	0x50, 0x76, 0x98, 0x1d, 0xbc, 0x0a, 0x45, 0x87, 0x5d, 0x5b, 0x69, 0x11, 0xba, 0x84, 0x73, 0x30,
-	0xf4, 0x31, 0xd4, 0xe7, 0x3e, 0x09, 0x92, 0xf9, 0xab, 0x0b, 0xd1, 0x55, 0x37, 0x53, 0x17, 0x5b,
-	0x2c, 0xa4, 0x89, 0x52, 0x28, 0xfa, 0x6f, 0xbe, 0x99, 0xb6, 0x8b, 0xcd, 0x24, 0xc0, 0xac, 0x9b,
-	0xee, 0x41, 0x65, 0x41, 0x48, 0x14, 0x1b, 0xd5, 0x3d, 0x6d, 0xbf, 0x79, 0xb8, 0x95, 0x9d, 0x28,
-	0x21, 0x11, 0x2b, 0x86, 0xaf, 0xa3, 0x87, 0xe9, 0xd9, 0xd7, 0x56, 0x0a, 0xa7, 0x67, 0x2f, 0x42,
-	0xca, 0xc3, 0xbf, 0x29, 0xce, 0xbe, 0x0a, 0xea, 0xe8, 0x99, 0x5e, 0x42, 0x0d, 0xa8, 0x58, 0x18,
-	0x8f, 0xb0, 0xae, 0x98, 0x3f, 0xa9, 0x70, 0x7b, 0x4c, 0xa2, 0x78, 0x1e, 0x27, 0x24, 0x48, 0xc4,
-	0x65, 0x9c, 0x87, 0xf2, 0x5a, 0xa1, 0x1d, 0xa8, 0xce, 0xbc, 0xb3, 0x33, 0xdb, 0x67, 0x07, 0xd0,
-	0xc2, 0xc2, 0x42, 0xcf, 0x60, 0xd3, 0xf3, 0xfd, 0x49, 0xe0, 0x45, 0x17, 0xf2, 0x92, 0x71, 0xd2,
-	0xff, 0x9d, 0x16, 0xd2, 0x29, 0xae, 0x8b, 0x88, 0x83, 0x12, 0x5e, 0xf5, 0x44, 0x9f, 0x40, 0x83,
-	0x86, 0x65, 0x73, 0xe2, 0x20, 0x32, 0x56, 0x7b, 0x72, 0x25, 0x0b, 0x90, 0xa1, 0x51, 0x17, 0x36,
-	0x96, 0x7c, 0x91, 0xef, 0x59, 0x1c, 0xca, 0xad, 0x75, 0xee, 0x1c, 0x31, 0x28, 0xe1, 0xa2, 0x0b,
-	0xba, 0x4f, 0xf7, 0x18, 0xcc, 0xc8, 0x99, 0x38, 0x9f, 0xcd, 0x9c, 0x33, 0x9d, 0x1e, 0x94, 0xb0,
-	0x00, 0x74, 0x1b, 0x50, 0x3b, 0x27, 0x71, 0xec, 0x9d, 0x12, 0xf3, 0x17, 0x15, 0x76, 0xd7, 0x33,
-	0x27, 0xc2, 0xbe, 0x8d, 0xba, 0xa7, 0xb0, 0x35, 0x5b, 0x2d, 0x4a, 0x90, 0xf7, 0xee, 0xb2, 0xaf,
-	0xba, 0x21, 0x0b, 0x36, 0x23, 0x41, 0x0b, 0xe5, 0x72, 0x1e, 0x9c, 0xbe, 0x0f, 0x7f, 0xab, 0x3e,
-	0xe8, 0x31, 0x34, 0x7d, 0x8f, 0x9c, 0x87, 0x01, 0xbb, 0x28, 0x82, 0xc3, 0x5c, 0x9b, 0x66, 0x6b,
-	0x83, 0x12, 0xce, 0x43, 0xff, 0x21, 0x77, 0x8f, 0x41, 0x5f, 0xbd, 0x2c, 0xa8, 0x0d, 0xea, 0x5c,
-	0x52, 0xa5, 0xce, 0x7d, 0xb4, 0x0d, 0x15, 0xcf, 0xf7, 0xa3, 0xd8, 0x50, 0xf7, 0xb4, 0xfd, 0x16,
-	0xe6, 0x86, 0xe9, 0x42, 0xbb, 0xa8, 0x18, 0x08, 0x41, 0x99, 0x5e, 0x09, 0xe1, 0xc9, 0xc6, 0xeb,
-	0x7d, 0x91, 0x01, 0xb5, 0x64, 0x7e, 0x4e, 0xc2, 0x65, 0xc2, 0x48, 0xd2, 0xb0, 0x34, 0xcd, 0x2f,
-	0x61, 0xeb, 0x8a, 0xa2, 0xbc, 0x2d, 0x30, 0x53, 0x44, 0x16, 0xb8, 0x81, 0xb9, 0xf1, 0x8e, 0xc0,
-	0x5f, 0xc0, 0xf6, 0x3a, 0xad, 0xa1, 0xb1, 0x69, 0x4d, 0x32, 0x36, 0x1d, 0xaf, 0x8f, 0x6d, 0xfe,
-	0x07, 0x36, 0x0a, 0xaf, 0x17, 0xd2, 0x41, 0x3b, 0x8f, 0x4f, 0x99, 0x67, 0x03, 0xd3, 0xa1, 0xf9,
-	0x14, 0x20, 0x7b, 0xad, 0xd6, 0x96, 0x2d, 0xd3, 0xa9, 0xeb, 0xd2, 0x69, 0x2c, 0x92, 0x48, 0xf7,
-	0xa7, 0x0a, 0x90, 0x49, 0x1c, 0x7a, 0x54, 0x78, 0x7d, 0x8d, 0x35, 0x2a, 0x98, 0x7f, 0x7f, 0x65,
-	0x6a, 0xda, 0xcc, 0x32, 0xb5, 0x0e, 0xda, 0x6c, 0xee, 0x33, 0x5e, 0x5a, 0x98, 0x0e, 0xe9, 0xcc,
-	0x57, 0x84, 0xbf, 0x9e, 0x2d, 0x4c, 0x87, 0xb4, 0x94, 0xaf, 0xbd, 0xb3, 0x25, 0x61, 0x3d, 0xd4,
-	0xc2, 0xdc, 0xa0, 0xb3, 0xb3, 0x70, 0x19, 0x24, 0x4c, 0x53, 0x2b, 0x98, 0x1b, 0x79, 0xae, 0x6b,
-	0x45, 0xae, 0x7f, 0x94, 0x12, 0xb7, 0x01, 0x8d, 0x27, 0xf6, 0xb0, 0xcf, 0x94, 0x49, 0x2f, 0xa1,
-	0x3d, 0xd8, 0x4d, 0x4d, 0x67, 0x2a, 0xf4, 0xc8, 0xea, 0x4f, 0xdd, 0x11, 0x47, 0x28, 0x54, 0xe7,
-	0x38, 0x02, 0x8f, 0x9e, 0xdb, 0x7d, 0x2a, 0x67, 0x2a, 0xba, 0x0e, 0x5b, 0x47, 0x96, 0x3b, 0xed,
-	0x1d, 0x8f, 0x1c, 0x2b, 0x55, 0x39, 0x8d, 0x42, 0xe9, 0xf4, 0x78, 0xd2, 0x3d, 0xb6, 0x7b, 0xd3,
-	0x67, 0xd6, 0x0b, 0xbd, 0x4c, 0xf3, 0xd1, 0xb9, 0xe7, 0x9d, 0xe3, 0x89, 0xa5, 0x57, 0x90, 0x0e,
-	0x2d, 0xc7, 0xea, 0xe0, 0xde, 0x40, 0xcc, 0x54, 0x29, 0x60, 0x3c, 0x91, 0x80, 0x1a, 0x15, 0x5d,
-	0x91, 0x49, 0xaf, 0x9b, 0xdf, 0x29, 0xd0, 0xcc, 0xc9, 0x00, 0xfa, 0x5f, 0x81, 0xf1, 0x9b, 0xeb,
-	0xa4, 0x22, 0x4f, 0xf9, 0xdd, 0x1c, 0xe5, 0x6b, 0xf5, 0x22, 0xed, 0x5b, 0xce, 0xb0, 0x96, 0x63,
-	0xd8, 0xbc, 0x2b, 0x08, 0x6b, 0x40, 0xa5, 0x6b, 0x1d, 0xd9, 0x43, 0x2e, 0x0d, 0xbc, 0x4c, 0x85,
-	0x2a, 0xbd, 0x35, 0xec, 0xeb, 0xaa, 0xf9, 0x7f, 0xa8, 0xcb, 0x70, 0xef, 0x79, 0x4b, 0x7f, 0x56,
-	0x00, 0x5d, 0xfd, 0xf9, 0xa0, 0x8f, 0x0a, 0x7b, 0xdb, 0x7b, 0xc7, 0x27, 0xe9, 0x3d, 0xba, 0x2a,
-	0xf1, 0xf8, 0x5b, 0xd7, 0xc0, 0x74, 0x48, 0x5f, 0xdb, 0x6f, 0xc8, 0xfc, 0xf4, 0x75, 0xc2, 0x1a,
-	0x4b, 0xc3, 0xc2, 0x32, 0x0f, 0xb2, 0x7f, 0x8f, 0xdb, 0x39, 0x92, 0x3d, 0xd1, 0x06, 0x98, 0x0c,
-	0x53, 0x5b, 0x41, 0x75, 0x28, 0xbb, 0xd8, 0x3e, 0xd1, 0x55, 0xf3, 0x1e, 0x6c, 0x5d, 0xf9, 0x75,
-	0xad, 0xbb, 0x53, 0xe6, 0xf7, 0x0a, 0x34, 0xd2, 0x7f, 0x16, 0x7a, 0x58, 0xd8, 0xda, 0x8d, 0xab,
-	0x3f, 0xb1, 0xfc, 0x8e, 0xb6, 0xa1, 0x92, 0x84, 0x8b, 0xf9, 0x8c, 0x6d, 0xa9, 0x81, 0xb9, 0x41,
-	0x93, 0xf8, 0x5e, 0xe2, 0x89, 0x23, 0x62, 0x63, 0xb3, 0x2b, 0xaa, 0x6f, 0x03, 0xd0, 0x16, 0x73,
-	0x47, 0x63, 0xbb, 0xe7, 0xf0, 0xfa, 0x73, 0x9f, 0x2f, 0x85, 0xb5, 0x14, 0x6d, 0x49, 0x67, 0xa0,
-	0xab, 0xb4, 0xdd, 0x9c, 0x49, 0xd7, 0xe9, 0x61, 0xbb, 0x6b, 0xe9, 0x9a, 0xf9, 0x2d, 0x2b, 0xf4,
-	0x84, 0x3f, 0xbd, 0x34, 0xcb, 0xab, 0x28, 0x3c, 0x37, 0x14, 0x9e, 0x85, 0x8e, 0xd3, 0xcc, 0x6a,
-	0x96, 0x99, 0xd6, 0x18, 0x93, 0x37, 0x41, 0x28, 0x3b, 0x86, 0x19, 0xe8, 0x16, 0xd4, 0x59, 0xb1,
-	0x76, 0x3f, 0x36, 0xca, 0xec, 0x99, 0x4a, 0x6d, 0xb4, 0x0b, 0x8d, 0x78, 0x7e, 0x1a, 0x78, 0xc9,
-	0x32, 0x92, 0x37, 0x39, 0x9b, 0x90, 0xb7, 0xbe, 0x9a, 0xde, 0x7a, 0xf3, 0x73, 0x80, 0xec, 0xaf,
-	0x42, 0xcf, 0x8f, 0x45, 0x8a, 0x0d, 0x85, 0xc5, 0x15, 0x16, 0xbd, 0xef, 0x94, 0x6e, 0x9a, 0x90,
-	0xb7, 0x98, 0x34, 0xcd, 0x31, 0xe8, 0xab, 0xda, 0xf6, 0x77, 0x6f, 0x76, 0xf6, 0xd0, 0xe5, 0xd8,
-	0x56, 0x53, 0xb6, 0x1d, 0xd8, 0xba, 0xa2, 0xbb, 0x68, 0x17, 0xea, 0x91, 0x54, 0x69, 0x46, 0xda,
-	0xa0, 0x84, 0xd3, 0x19, 0xb4, 0x93, 0xff, 0x72, 0xd2, 0x25, 0x6e, 0x76, 0xeb, 0x50, 0x8d, 0x48,
-	0xbc, 0x3c, 0xa3, 0x0d, 0xb8, 0xb3, 0xfe, 0x27, 0x94, 0x15, 0xa6, 0xe4, 0x5f, 0xe0, 0x7b, 0xd0,
-	0xcc, 0xe9, 0x2d, 0xdd, 0xbf, 0x50, 0x4d, 0x96, 0xbd, 0x81, 0x53, 0x11, 0xad, 0x43, 0x95, 0x6b,
-	0x6c, 0xb7, 0xf5, 0xeb, 0xe5, 0x1d, 0xe5, 0xb7, 0xcb, 0x3b, 0xca, 0xef, 0x97, 0x77, 0x94, 0xbf,
-	0x02, 0x00, 0x00, 0xff, 0xff, 0x93, 0x31, 0xe5, 0xba, 0xb9, 0x0d, 0x00, 0x00,
+	// 1428 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0xcb, 0x6e, 0xdb, 0x46,
+	0x17, 0x16, 0x49, 0x5d, 0x8f, 0x64, 0x9b, 0x9e, 0x38, 0x0e, 0x93, 0xf8, 0xcf, 0xaf, 0x12, 0x48,
+	0xe3, 0x5c, 0x6a, 0xb4, 0x6e, 0x0b, 0xa4, 0x05, 0x5a, 0x40, 0x17, 0xc6, 0x62, 0x62, 0x4b, 0xc2,
+	0x90, 0x4a, 0x11, 0xa0, 0x80, 0x40, 0x8b, 0x13, 0x47, 0xa8, 0x4c, 0x29, 0x24, 0xd5, 0xc2, 0x0f,
+	0xd2, 0x7d, 0x57, 0x05, 0xba, 0xee, 0xa2, 0xed, 0x1b, 0x74, 0xd9, 0x47, 0x28, 0xbc, 0xeb, 0xa6,
+	0xcf, 0x50, 0xcc, 0x8d, 0x17, 0x59, 0x49, 0x83, 0xee, 0xe6, 0xcc, 0x7c, 0xe7, 0xcc, 0x99, 0xef,
+	0x9c, 0x99, 0x6f, 0x00, 0x16, 0x87, 0x0b, 0xff, 0x60, 0x11, 0xce, 0xe3, 0x39, 0xaa, 0xf0, 0xf1,
+	0xa9, 0x79, 0x59, 0x84, 0x0a, 0x26, 0xaf, 0x97, 0x24, 0x8a, 0xd1, 0x7d, 0x28, 0xc6, 0x17, 0x0b,
+	0x62, 0x28, 0x4d, 0x75, 0x7f, 0xf3, 0xf0, 0xfa, 0x81, 0xc0, 0x1c, 0x88, 0xf5, 0x03, 0xf7, 0x62,
+	0x41, 0x30, 0x83, 0xa0, 0x8f, 0xa0, 0x32, 0x99, 0x07, 0x01, 0x99, 0xc4, 0x86, 0xda, 0x54, 0xf6,
+	0xeb, 0x87, 0x37, 0x12, 0x74, 0x87, 0xcf, 0x0b, 0x27, 0x2c, 0x71, 0xe8, 0x73, 0x80, 0x28, 0x0e,
+	0x89, 0x77, 0x3e, 0x58, 0x90, 0xc0, 0xd0, 0x98, 0xd7, 0xad, 0xc4, 0xcb, 0x49, 0x96, 0xa4, 0x63,
+	0x06, 0x8d, 0x3a, 0xb0, 0xc1, 0xad, 0x9e, 0x17, 0xf8, 0x33, 0x12, 0x1a, 0x45, 0xe6, 0xfe, 0xbf,
+	0x15, 0x77, 0xb1, 0x2a, 0x23, 0xe4, 0x7d, 0xd0, 0x5d, 0xd0, 0xfc, 0x57, 0xb1, 0x51, 0x62, 0xae,
+	0xd7, 0x12, 0xd7, 0x6e, 0xcf, 0x95, 0x0e, 0x74, 0x1d, 0x7d, 0x01, 0x75, 0x9a, 0xf2, 0x89, 0x17,
+	0x78, 0x67, 0x24, 0x34, 0xca, 0x0c, 0x7e, 0x3b, 0x77, 0x3c, 0xb1, 0x26, 0xdd, 0xb2, 0x78, 0x7a,
+	0x4c, 0x7f, 0x1a, 0x49, 0x72, 0x2a, 0x2b, 0xc7, 0xec, 0x26, 0x4b, 0xc9, 0x31, 0x53, 0x34, 0x7a,
+	0x00, 0xe5, 0xc5, 0xf2, 0x34, 0x5a, 0x9e, 0x1a, 0x55, 0xe6, 0x87, 0x12, 0xbf, 0xa1, 0x23, 0xf1,
+	0x02, 0x61, 0xfe, 0xa4, 0x40, 0x91, 0x16, 0x04, 0x35, 0xa0, 0x6a, 0x77, 0xad, 0xbe, 0x6b, 0x3f,
+	0x79, 0xa1, 0x17, 0x50, 0x1d, 0x2a, 0x9d, 0x41, 0xbf, 0x6f, 0x75, 0x5c, 0x5d, 0x41, 0x5b, 0x50,
+	0x77, 0x5c, 0x6c, 0xb5, 0x4e, 0xc6, 0x83, 0xa1, 0xd5, 0xd7, 0x55, 0x84, 0x60, 0x53, 0x4c, 0xf4,
+	0x5a, 0xfd, 0xee, 0xb1, 0x85, 0x75, 0x0d, 0x55, 0x40, 0xeb, 0xf6, 0x5c, 0xbd, 0x88, 0x36, 0x01,
+	0x8e, 0x6d, 0xc7, 0x1d, 0x0f, 0x2d, 0x0b, 0x3b, 0x7a, 0x89, 0x7a, 0xd3, 0x50, 0x27, 0xad, 0x7e,
+	0xeb, 0xc8, 0xc2, 0x7a, 0x99, 0x02, 0xba, 0xb6, 0x23, 0xc3, 0x57, 0x10, 0x40, 0x79, 0x38, 0x6a,
+	0x3b, 0xa3, 0xb6, 0x5e, 0x45, 0xb7, 0xe1, 0xc6, 0xd0, 0xc2, 0x8e, 0xed, 0xb8, 0x56, 0xdf, 0x1d,
+	0x53, 0xcc, 0x78, 0x34, 0x3c, 0xc2, 0xad, 0xae, 0xa5, 0xd7, 0xcc, 0xbf, 0x54, 0xa8, 0x62, 0x12,
+	0x2d, 0xe6, 0x41, 0x44, 0xd0, 0x83, 0x5c, 0x97, 0xed, 0x66, 0xba, 0x8c, 0x03, 0xb2, 0x6d, 0xf6,
+	0x08, 0x4a, 0x24, 0x0c, 0xe7, 0xa1, 0x68, 0xb2, 0x14, 0x6c, 0xd1, 0x59, 0xe9, 0x81, 0x39, 0x08,
+	0x7d, 0x2c, 0x3b, 0xcc, 0x0e, 0x5e, 0xce, 0x45, 0x87, 0x5d, 0x5b, 0x69, 0x11, 0xba, 0x84, 0x33,
+	0x30, 0xf4, 0x29, 0x54, 0xa7, 0x3e, 0x09, 0xe2, 0xe9, 0xcb, 0x0b, 0xd1, 0x55, 0x37, 0x13, 0x17,
+	0x5b, 0x2c, 0x24, 0x1b, 0x25, 0x50, 0xf4, 0x7e, 0xb6, 0x99, 0x76, 0xf2, 0xcd, 0x24, 0xc0, 0xac,
+	0x9b, 0xee, 0x41, 0x69, 0x41, 0x48, 0x18, 0x19, 0xe5, 0xa6, 0xb6, 0x5f, 0x3f, 0xdc, 0x4e, 0x2b,
+	0x4a, 0x48, 0xc8, 0x92, 0xe1, 0xeb, 0xe8, 0x61, 0x52, 0xfb, 0xca, 0x4a, 0xe2, 0xb4, 0xf6, 0x22,
+	0xa4, 0x2c, 0xfe, 0x4d, 0x51, 0xfb, 0x32, 0xa8, 0x83, 0x67, 0x7a, 0x01, 0xd5, 0xa0, 0x64, 0x61,
+	0x3c, 0xc0, 0xba, 0x62, 0xfe, 0xa2, 0xc2, 0xed, 0x21, 0x09, 0xa3, 0x69, 0x14, 0x93, 0x20, 0x16,
+	0x97, 0x71, 0x3a, 0x97, 0xd7, 0x0a, 0xed, 0x42, 0x79, 0xe2, 0xcd, 0x66, 0xb6, 0xcf, 0x0a, 0xd0,
+	0xc0, 0xc2, 0x42, 0xcf, 0x60, 0xcb, 0xf3, 0xfd, 0x51, 0xe0, 0x85, 0x17, 0xf2, 0x92, 0x71, 0xd2,
+	0xff, 0x9f, 0x24, 0xd2, 0xca, 0xaf, 0x8b, 0x88, 0xbd, 0x02, 0x5e, 0xf5, 0x44, 0x9f, 0x41, 0x8d,
+	0x86, 0x65, 0x73, 0xa2, 0x10, 0x29, 0xab, 0x1d, 0xb9, 0x92, 0x06, 0x48, 0xd1, 0xa8, 0x0d, 0x1b,
+	0x4b, 0xbe, 0xc8, 0xcf, 0x2c, 0x8a, 0x72, 0x6b, 0x9d, 0x3b, 0x47, 0xf4, 0x0a, 0x38, 0xef, 0x82,
+	0xee, 0xd3, 0x33, 0x06, 0x13, 0x32, 0x13, 0xf5, 0xd9, 0xca, 0x38, 0xd3, 0xe9, 0x5e, 0x01, 0x0b,
+	0x40, 0xbb, 0x06, 0x95, 0x73, 0x12, 0x45, 0xde, 0x19, 0x31, 0x7f, 0x53, 0x61, 0x6f, 0x3d, 0x73,
+	0x22, 0xec, 0x9b, 0xa8, 0x7b, 0x0a, 0xdb, 0x93, 0xd5, 0xa4, 0x04, 0x79, 0x6f, 0x4f, 0xfb, 0xaa,
+	0x1b, 0xb2, 0x60, 0x2b, 0x14, 0xb4, 0x50, 0x2e, 0xa7, 0xc1, 0xd9, 0xbb, 0xf0, 0xb7, 0xea, 0x83,
+	0x1e, 0x43, 0xdd, 0xf7, 0xc8, 0xf9, 0x3c, 0x60, 0x17, 0x45, 0x70, 0x98, 0x69, 0xd3, 0x74, 0xad,
+	0x57, 0xc0, 0x59, 0xe8, 0x7f, 0xe4, 0xee, 0x31, 0xe8, 0xab, 0x97, 0x05, 0x6d, 0x82, 0x3a, 0x95,
+	0x54, 0xa9, 0x53, 0x1f, 0xed, 0x40, 0xc9, 0xf3, 0xfd, 0x30, 0x32, 0xd4, 0xa6, 0xb6, 0xdf, 0xc0,
+	0xdc, 0x30, 0x5d, 0xd8, 0xcc, 0x2b, 0x06, 0x42, 0x50, 0xa4, 0x57, 0x42, 0x78, 0xb2, 0xf1, 0x7a,
+	0x5f, 0x64, 0x40, 0x25, 0x9e, 0x9e, 0x93, 0xf9, 0x32, 0x66, 0x24, 0x69, 0x58, 0x9a, 0xe6, 0x57,
+	0xb0, 0x7d, 0x45, 0x51, 0xde, 0x14, 0x98, 0x29, 0x22, 0x0b, 0x5c, 0xc3, 0xdc, 0x78, 0x4b, 0xe0,
+	0xaf, 0x61, 0x67, 0x9d, 0xd6, 0xd0, 0xd8, 0x34, 0x27, 0x19, 0x9b, 0x8e, 0xdf, 0x10, 0xfb, 0x16,
+	0x54, 0x4f, 0xbd, 0x19, 0x65, 0xd0, 0x37, 0xb4, 0xa6, 0xba, 0x5f, 0xc5, 0x89, 0x6d, 0xbe, 0x07,
+	0x1b, 0xb9, 0x97, 0x0d, 0xe9, 0xa0, 0x9d, 0x47, 0x67, 0x2c, 0x6a, 0x0d, 0xd3, 0xa1, 0xf9, 0x14,
+	0x20, 0x7d, 0xc9, 0xd6, 0x1e, 0x49, 0xa6, 0xa2, 0xae, 0x4b, 0x45, 0x63, 0x91, 0xb8, 0x61, 0xfe,
+	0xad, 0x02, 0xa4, 0xf2, 0x87, 0x1e, 0xe5, 0x5e, 0x66, 0x63, 0x8d, 0x42, 0x66, 0xdf, 0x66, 0xb9,
+	0x35, 0x6d, 0x74, 0xb9, 0xb5, 0x0e, 0xda, 0x64, 0xea, 0x33, 0xce, 0x1a, 0x98, 0x0e, 0xe9, 0xcc,
+	0x37, 0x84, 0xbf, 0xac, 0x0d, 0x4c, 0x87, 0x34, 0x95, 0x6f, 0xbd, 0xd9, 0x92, 0xb0, 0xfe, 0x6a,
+	0x60, 0x6e, 0xd0, 0xd9, 0xc9, 0x7c, 0x19, 0xc4, 0x4c, 0x6f, 0x4b, 0x98, 0x1b, 0xd9, 0x3a, 0x54,
+	0xf2, 0x75, 0xf8, 0x59, 0xca, 0xdf, 0x06, 0xd4, 0x9e, 0xd8, 0xfd, 0x2e, 0x53, 0x2d, 0xbd, 0x80,
+	0x9a, 0xb0, 0x97, 0x98, 0xce, 0x58, 0x68, 0x95, 0xd5, 0x1d, 0xbb, 0x03, 0x8e, 0x50, 0xa8, 0x06,
+	0x72, 0x04, 0x1e, 0x3c, 0xb7, 0xbb, 0x54, 0xea, 0x54, 0x74, 0x1d, 0xb6, 0x8f, 0x2c, 0x77, 0xdc,
+	0x39, 0x1e, 0x38, 0x56, 0xa2, 0x80, 0x1a, 0x85, 0xd2, 0xe9, 0xe1, 0xa8, 0x7d, 0x6c, 0x77, 0xc6,
+	0xcf, 0xac, 0x17, 0x7a, 0x91, 0xee, 0x47, 0xe7, 0x9e, 0xb7, 0x8e, 0x47, 0x96, 0x5e, 0x42, 0x3a,
+	0x34, 0x1c, 0xab, 0x85, 0x3b, 0x3d, 0x31, 0x53, 0xa6, 0x80, 0xe1, 0x48, 0x02, 0x2a, 0x54, 0x90,
+	0xc5, 0x4e, 0x7a, 0xd5, 0xfc, 0x41, 0x81, 0x7a, 0x46, 0x22, 0xd0, 0x07, 0x39, 0xc6, 0x6f, 0xae,
+	0x93, 0x91, 0x2c, 0xe5, 0x77, 0x33, 0x94, 0xaf, 0xd5, 0x92, 0xa4, 0xa7, 0x39, 0xc3, 0x5a, 0x86,
+	0x61, 0xf3, 0xae, 0x20, 0xac, 0x06, 0xa5, 0xb6, 0x75, 0x64, 0xf7, 0xb9, 0x6c, 0xf0, 0x34, 0x15,
+	0xfa, 0x0b, 0xb0, 0xfa, 0x5d, 0x5d, 0x35, 0x3f, 0x84, 0xaa, 0x0c, 0xf7, 0x8e, 0x37, 0xf8, 0x57,
+	0x05, 0xd0, 0xd5, 0x5f, 0x11, 0xfa, 0x24, 0x77, 0xb6, 0xe6, 0x5b, 0x3e, 0x50, 0xef, 0xd0, 0x55,
+	0xb1, 0xc7, 0xdf, 0xc1, 0x1a, 0xa6, 0x43, 0xfa, 0x12, 0x7f, 0x47, 0xa6, 0x67, 0xaf, 0x62, 0xd6,
+	0x58, 0x1a, 0x16, 0x96, 0x79, 0x90, 0xfe, 0x89, 0xdc, 0xd6, 0x91, 0xec, 0x89, 0x4d, 0x80, 0x51,
+	0x3f, 0xb1, 0x15, 0x54, 0x85, 0xa2, 0x8b, 0xed, 0x13, 0x5d, 0x35, 0xef, 0xc1, 0xf6, 0x95, 0x1f,
+	0xd9, 0xba, 0x3b, 0x65, 0xfe, 0xa8, 0x40, 0x2d, 0xf9, 0x83, 0xa1, 0x87, 0xb9, 0xa3, 0xdd, 0xb8,
+	0xfa, 0x4b, 0xcb, 0x9e, 0x68, 0x07, 0x4a, 0xf1, 0x7c, 0x31, 0x9d, 0xb0, 0x23, 0xd5, 0x30, 0x37,
+	0xe8, 0x26, 0xbe, 0x17, 0x7b, 0xa2, 0x44, 0x6c, 0x6c, 0xb6, 0x45, 0xf6, 0x9b, 0x00, 0xb4, 0xc5,
+	0xdc, 0xc1, 0xd0, 0xee, 0x38, 0x3c, 0xff, 0xcc, 0xc7, 0x4c, 0x61, 0x2d, 0x45, 0x5b, 0xd2, 0xe9,
+	0xe9, 0x2a, 0x6d, 0x37, 0x67, 0xd4, 0x76, 0x3a, 0xd8, 0x6e, 0x5b, 0xba, 0x66, 0x7e, 0xcf, 0x12,
+	0x3d, 0xe1, 0xcf, 0x32, 0xdd, 0xe5, 0x65, 0x38, 0x3f, 0x37, 0x14, 0xbe, 0x0b, 0x1d, 0x27, 0x3b,
+	0xab, 0xe9, 0xce, 0x34, 0xc7, 0x88, 0xbc, 0x0e, 0xe6, 0xb2, 0x63, 0x98, 0x41, 0x5f, 0x2a, 0x96,
+	0xac, 0xdd, 0x8d, 0x8c, 0x22, 0x7b, 0xc2, 0x12, 0x1b, 0xed, 0x41, 0x2d, 0x9a, 0x9e, 0x05, 0x5e,
+	0xbc, 0x0c, 0xe5, 0x4d, 0x4e, 0x27, 0xe4, 0xad, 0x2f, 0x27, 0xb7, 0xde, 0xfc, 0x12, 0x20, 0xfd,
+	0xc7, 0xd0, 0xfa, 0xb1, 0x48, 0x91, 0xa1, 0xb0, 0xb8, 0xc2, 0xa2, 0xf7, 0x9d, 0xd2, 0x4d, 0x37,
+	0xe4, 0x2d, 0x26, 0x4d, 0x73, 0x08, 0xfa, 0xaa, 0xee, 0xfd, 0xdb, 0x7b, 0x9e, 0x3e, 0x74, 0x19,
+	0xb6, 0xd5, 0x84, 0x6d, 0x07, 0xb6, 0xaf, 0x68, 0x32, 0xda, 0x83, 0x6a, 0x28, 0x15, 0x9c, 0x91,
+	0xd6, 0x2b, 0xe0, 0x64, 0x06, 0xed, 0x66, 0xbf, 0xa3, 0x74, 0x89, 0x9b, 0xed, 0x2a, 0x94, 0x43,
+	0x12, 0x2d, 0x67, 0xb1, 0xf9, 0x14, 0x76, 0xd7, 0xff, 0x92, 0xd2, 0xc4, 0x94, 0x6c, 0x62, 0x59,
+	0x31, 0x50, 0x57, 0xc4, 0xe0, 0x1e, 0xd4, 0x33, 0x3a, 0x4d, 0xb9, 0x11, 0x6a, 0xcb, 0x32, 0xab,
+	0xe1, 0x44, 0x7c, 0xab, 0x50, 0xe6, 0xda, 0xdc, 0x6e, 0xfc, 0x7e, 0x79, 0x47, 0xf9, 0xe3, 0xf2,
+	0x8e, 0xf2, 0xe7, 0xe5, 0x1d, 0xe5, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x12, 0xf5, 0x9c, 0x16,
+	0xf1, 0x0d, 0x00, 0x00,
 }
 
 func (m *Request) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2065,117 +2345,97 @@ func (m *Request) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Request) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Request) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Pubsub != nil {
-		{
-			size, err := m.Pubsub.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x42
-	}
-	if m.Disconnect != nil {
-		{
-			size, err := m.Disconnect.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x3a
-	}
-	if m.ConnManager != nil {
-		{
-			size, err := m.ConnManager.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x32
-	}
-	if m.Dht != nil {
-		{
-			size, err := m.Dht.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.StreamHandler != nil {
-		{
-			size, err := m.StreamHandler.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.StreamOpen != nil {
-		{
-			size, err := m.StreamOpen.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Connect != nil {
-		{
-			size, err := m.Connect.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
-		i--
 		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 	}
-	return len(dAtA) - i, nil
+	if m.Connect != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Connect.Size()))
+		n1, err1 := m.Connect.MarshalTo(dAtA[i:])
+		if err1 != nil {
+			return 0, err1
+		}
+		i += n1
+	}
+	if m.StreamOpen != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamOpen.Size()))
+		n2, err2 := m.StreamOpen.MarshalTo(dAtA[i:])
+		if err2 != nil {
+			return 0, err2
+		}
+		i += n2
+	}
+	if m.StreamHandler != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamHandler.Size()))
+		n3, err3 := m.StreamHandler.MarshalTo(dAtA[i:])
+		if err3 != nil {
+			return 0, err3
+		}
+		i += n3
+	}
+	if m.Dht != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Dht.Size()))
+		n4, err4 := m.Dht.MarshalTo(dAtA[i:])
+		if err4 != nil {
+			return 0, err4
+		}
+		i += n4
+	}
+	if m.ConnManager != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.ConnManager.Size()))
+		n5, err5 := m.ConnManager.MarshalTo(dAtA[i:])
+		if err5 != nil {
+			return 0, err5
+		}
+		i += n5
+	}
+	if m.Disconnect != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Disconnect.Size()))
+		n6, err6 := m.Disconnect.MarshalTo(dAtA[i:])
+		if err6 != nil {
+			return 0, err6
+		}
+		i += n6
+	}
+	if m.Pubsub != nil {
+		dAtA[i] = 0x42
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Pubsub.Size()))
+		n7, err7 := m.Pubsub.MarshalTo(dAtA[i:])
+		if err7 != nil {
+			return 0, err7
+		}
+		i += n7
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *Response) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2183,107 +2443,89 @@ func (m *Response) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Response) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Response) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Pubsub != nil {
-		{
-			size, err := m.Pubsub.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x3a
-	}
-	if len(m.Peers) > 0 {
-		for iNdEx := len(m.Peers) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Peers[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintP2Pd(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x32
-		}
-	}
-	if m.Dht != nil {
-		{
-			size, err := m.Dht.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.Identify != nil {
-		{
-			size, err := m.Identify.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.StreamInfo != nil {
-		{
-			size, err := m.StreamInfo.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Error != nil {
-		{
-			size, err := m.Error.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
-		i--
 		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 	}
-	return len(dAtA) - i, nil
+	if m.Error != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Error.Size()))
+		n8, err8 := m.Error.MarshalTo(dAtA[i:])
+		if err8 != nil {
+			return 0, err8
+		}
+		i += n8
+	}
+	if m.StreamInfo != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamInfo.Size()))
+		n9, err9 := m.StreamInfo.MarshalTo(dAtA[i:])
+		if err9 != nil {
+			return 0, err9
+		}
+		i += n9
+	}
+	if m.Identify != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Identify.Size()))
+		n10, err10 := m.Identify.MarshalTo(dAtA[i:])
+		if err10 != nil {
+			return 0, err10
+		}
+		i += n10
+	}
+	if m.Dht != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Dht.Size()))
+		n11, err11 := m.Dht.MarshalTo(dAtA[i:])
+		if err11 != nil {
+			return 0, err11
+		}
+		i += n11
+	}
+	if len(m.Peers) > 0 {
+		for _, msg := range m.Peers {
+			dAtA[i] = 0x32
+			i++
+			i = encodeVarintP2Pd(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.Pubsub != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Pubsub.Size()))
+		n12, err12 := m.Pubsub.MarshalTo(dAtA[i:])
+		if err12 != nil {
+			return 0, err12
+		}
+		i += n12
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *PersistentConnectionRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2291,128 +2533,91 @@ func (m *PersistentConnectionRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PersistentConnectionRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Message != nil {
-		{
-			size := m.Message.Size()
-			i -= size
-			if _, err := m.Message.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
-	}
 	if m.CallId == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("callId")
 	} else {
-		i -= len(m.CallId)
-		copy(dAtA[i:], m.CallId)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.CallId)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.CallId)))
+		i += copy(dAtA[i:], m.CallId)
 	}
-	return len(dAtA) - i, nil
+	if m.Message != nil {
+		nn13, err13 := m.Message.MarshalTo(dAtA[i:])
+		if err13 != nil {
+			return 0, err13
+		}
+		i += nn13
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *PersistentConnectionRequest_AddUnaryHandler) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionRequest_AddUnaryHandler) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.AddUnaryHandler != nil {
-		{
-			size, err := m.AddUnaryHandler.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.AddUnaryHandler.Size()))
+		n14, err14 := m.AddUnaryHandler.MarshalTo(dAtA[i:])
+		if err14 != nil {
+			return 0, err14
+		}
+		i += n14
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *PersistentConnectionRequest_CallUnary) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionRequest_CallUnary) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.CallUnary != nil {
-		{
-			size, err := m.CallUnary.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.CallUnary.Size()))
+		n15, err15 := m.CallUnary.MarshalTo(dAtA[i:])
+		if err15 != nil {
+			return 0, err15
+		}
+		i += n15
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *PersistentConnectionRequest_UnaryResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionRequest_UnaryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.UnaryResponse != nil {
-		{
-			size, err := m.UnaryResponse.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x22
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.UnaryResponse.Size()))
+		n16, err16 := m.UnaryResponse.MarshalTo(dAtA[i:])
+		if err16 != nil {
+			return 0, err16
+		}
+		i += n16
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *PersistentConnectionRequest_Cancel) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionRequest_Cancel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.Cancel != nil {
-		{
-			size, err := m.Cancel.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Cancel.Size()))
+		n17, err17 := m.Cancel.MarshalTo(dAtA[i:])
+		if err17 != nil {
+			return 0, err17
+		}
+		i += n17
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *PersistentConnectionResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2420,128 +2625,91 @@ func (m *PersistentConnectionResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PersistentConnectionResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Message != nil {
-		{
-			size := m.Message.Size()
-			i -= size
-			if _, err := m.Message.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
-	}
 	if m.CallId == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("callId")
 	} else {
-		i -= len(m.CallId)
-		copy(dAtA[i:], m.CallId)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.CallId)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.CallId)))
+		i += copy(dAtA[i:], m.CallId)
 	}
-	return len(dAtA) - i, nil
+	if m.Message != nil {
+		nn18, err18 := m.Message.MarshalTo(dAtA[i:])
+		if err18 != nil {
+			return 0, err18
+		}
+		i += nn18
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *PersistentConnectionResponse_CallUnaryResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionResponse_CallUnaryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.CallUnaryResponse != nil {
-		{
-			size, err := m.CallUnaryResponse.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.CallUnaryResponse.Size()))
+		n19, err19 := m.CallUnaryResponse.MarshalTo(dAtA[i:])
+		if err19 != nil {
+			return 0, err19
+		}
+		i += n19
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *PersistentConnectionResponse_RequestHandling) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionResponse_RequestHandling) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.RequestHandling != nil {
-		{
-			size, err := m.RequestHandling.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.RequestHandling.Size()))
+		n20, err20 := m.RequestHandling.MarshalTo(dAtA[i:])
+		if err20 != nil {
+			return 0, err20
+		}
+		i += n20
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *PersistentConnectionResponse_DaemonError) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionResponse_DaemonError) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.DaemonError != nil {
-		{
-			size, err := m.DaemonError.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x22
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.DaemonError.Size()))
+		n21, err21 := m.DaemonError.MarshalTo(dAtA[i:])
+		if err21 != nil {
+			return 0, err21
+		}
+		i += n21
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *PersistentConnectionResponse_Cancel) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PersistentConnectionResponse_Cancel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.Cancel != nil {
-		{
-			size, err := m.Cancel.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
 		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Cancel.Size()))
+		n22, err22 := m.Cancel.MarshalTo(dAtA[i:])
+		if err22 != nil {
+			return 0, err22
+		}
+		i += n22
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *IdentifyResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2549,44 +2717,36 @@ func (m *IdentifyResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *IdentifyResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *IdentifyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Addrs) > 0 {
-		for iNdEx := len(m.Addrs) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Addrs[iNdEx])
-			copy(dAtA[i:], m.Addrs[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addrs[iNdEx])))
-			i--
-			dAtA[i] = 0x12
-		}
-	}
 	if m.Id == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
 	} else {
-		i -= len(m.Id)
-		copy(dAtA[i:], m.Id)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Id)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
 	}
-	return len(dAtA) - i, nil
+	if len(m.Addrs) > 0 {
+		for _, b := range m.Addrs {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
+			i += copy(dAtA[i:], b)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *ConnectRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2594,49 +2754,41 @@ func (m *ConnectRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ConnectRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *ConnectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Timeout != nil {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
-		i--
-		dAtA[i] = 0x18
-	}
-	if len(m.Addrs) > 0 {
-		for iNdEx := len(m.Addrs) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Addrs[iNdEx])
-			copy(dAtA[i:], m.Addrs[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addrs[iNdEx])))
-			i--
-			dAtA[i] = 0x12
-		}
-	}
 	if m.Peer == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		i -= len(m.Peer)
-		copy(dAtA[i:], m.Peer)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
 	}
-	return len(dAtA) - i, nil
+	if len(m.Addrs) > 0 {
+		for _, b := range m.Addrs {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
+			i += copy(dAtA[i:], b)
+		}
+	}
+	if m.Timeout != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *StreamOpenRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2644,49 +2796,48 @@ func (m *StreamOpenRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StreamOpenRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *StreamOpenRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Timeout != nil {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
-		i--
-		dAtA[i] = 0x18
-	}
-	if len(m.Proto) > 0 {
-		for iNdEx := len(m.Proto) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Proto[iNdEx])
-			copy(dAtA[i:], m.Proto[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Proto[iNdEx])))
-			i--
-			dAtA[i] = 0x12
-		}
-	}
 	if m.Peer == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		i -= len(m.Peer)
-		copy(dAtA[i:], m.Peer)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
 	}
-	return len(dAtA) - i, nil
+	if len(m.Proto) > 0 {
+		for _, s := range m.Proto {
+			dAtA[i] = 0x12
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.Timeout != nil {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *StreamHandlerRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2694,44 +2845,55 @@ func (m *StreamHandlerRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StreamHandlerRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *StreamHandlerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Proto) > 0 {
-		for iNdEx := len(m.Proto) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Proto[iNdEx])
-			copy(dAtA[i:], m.Proto[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Proto[iNdEx])))
-			i--
-			dAtA[i] = 0x12
-		}
-	}
 	if m.Addr == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
 	} else {
-		i -= len(m.Addr)
-		copy(dAtA[i:], m.Addr)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addr)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addr)))
+		i += copy(dAtA[i:], m.Addr)
 	}
-	return len(dAtA) - i, nil
+	if len(m.Proto) > 0 {
+		for _, s := range m.Proto {
+			dAtA[i] = 0x12
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.Balanced == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("balanced")
+	} else {
+		dAtA[i] = 0x18
+		i++
+		if *m.Balanced {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *ErrorResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2739,35 +2901,28 @@ func (m *ErrorResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ErrorResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *ErrorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
 	if m.Msg == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("msg")
 	} else {
-		i -= len(*m.Msg)
-		copy(dAtA[i:], *m.Msg)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Msg)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Msg)))
+		i += copy(dAtA[i:], *m.Msg)
 	}
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *StreamInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2775,53 +2930,44 @@ func (m *StreamInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StreamInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *StreamInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Proto == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
+	if m.Peer == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		i -= len(*m.Proto)
-		copy(dAtA[i:], *m.Proto)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
-		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
 	}
 	if m.Addr == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
 	} else {
-		i -= len(m.Addr)
-		copy(dAtA[i:], m.Addr)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addr)))
-		i--
 		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addr)))
+		i += copy(dAtA[i:], m.Addr)
 	}
-	if m.Peer == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+	if m.Proto == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
 	} else {
-		i -= len(m.Peer)
-		copy(dAtA[i:], m.Peer)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
+		i += copy(dAtA[i:], *m.Proto)
 	}
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *DHTRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2829,71 +2975,61 @@ func (m *DHTRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DHTRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *DHTRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Timeout != nil {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
-		i--
-		dAtA[i] = 0x38
-	}
-	if m.Count != nil {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Count))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.Value != nil {
-		i -= len(m.Value)
-		copy(dAtA[i:], m.Value)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.Key != nil {
-		i -= len(m.Key)
-		copy(dAtA[i:], m.Key)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Key)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.Cid != nil {
-		i -= len(m.Cid)
-		copy(dAtA[i:], m.Cid)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Cid)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Peer != nil {
-		i -= len(m.Peer)
-		copy(dAtA[i:], m.Peer)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i--
-		dAtA[i] = 0x12
-	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
-		i--
 		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 	}
-	return len(dAtA) - i, nil
+	if m.Peer != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
+	}
+	if m.Cid != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Cid)))
+		i += copy(dAtA[i:], m.Cid)
+	}
+	if m.Key != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Key)))
+		i += copy(dAtA[i:], m.Key)
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
+		i += copy(dAtA[i:], m.Value)
+	}
+	if m.Count != nil {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Count))
+	}
+	if m.Timeout != nil {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *DHTResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2901,52 +3037,43 @@ func (m *DHTResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DHTResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *DHTResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Value != nil {
-		i -= len(m.Value)
-		copy(dAtA[i:], m.Value)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Peer != nil {
-		{
-			size, err := m.Peer.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintP2Pd(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
-		i--
 		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 	}
-	return len(dAtA) - i, nil
+	if m.Peer != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Peer.Size()))
+		n23, err23 := m.Peer.MarshalTo(dAtA[i:])
+		if err23 != nil {
+			return 0, err23
+		}
+		i += n23
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
+		i += copy(dAtA[i:], m.Value)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *PeerInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2954,44 +3081,36 @@ func (m *PeerInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PeerInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PeerInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if len(m.Addrs) > 0 {
-		for iNdEx := len(m.Addrs) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Addrs[iNdEx])
-			copy(dAtA[i:], m.Addrs[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addrs[iNdEx])))
-			i--
-			dAtA[i] = 0x12
-		}
-	}
 	if m.Id == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
 	} else {
-		i -= len(m.Id)
-		copy(dAtA[i:], m.Id)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Id)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
 	}
-	return len(dAtA) - i, nil
+	if len(m.Addrs) > 0 {
+		for _, b := range m.Addrs {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
+			i += copy(dAtA[i:], b)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *ConnManagerRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -2999,52 +3118,44 @@ func (m *ConnManagerRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ConnManagerRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *ConnManagerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Weight != nil {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Weight))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.Tag != nil {
-		i -= len(*m.Tag)
-		copy(dAtA[i:], *m.Tag)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Tag)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Peer != nil {
-		i -= len(m.Peer)
-		copy(dAtA[i:], m.Peer)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i--
-		dAtA[i] = 0x12
-	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
-		i--
 		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 	}
-	return len(dAtA) - i, nil
+	if m.Peer != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
+	}
+	if m.Tag != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Tag)))
+		i += copy(dAtA[i:], *m.Tag)
+	}
+	if m.Weight != nil {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Weight))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *DisconnectRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3052,35 +3163,28 @@ func (m *DisconnectRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DisconnectRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *DisconnectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
 	if m.Peer == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		i -= len(m.Peer)
-		copy(dAtA[i:], m.Peer)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
 	}
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *PSRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3088,47 +3192,39 @@ func (m *PSRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PSRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PSRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Data != nil {
-		i -= len(m.Data)
-		copy(dAtA[i:], m.Data)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Topic != nil {
-		i -= len(*m.Topic)
-		copy(dAtA[i:], *m.Topic)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Topic)))
-		i--
-		dAtA[i] = 0x12
-	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
-		i--
 		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 	}
-	return len(dAtA) - i, nil
+	if m.Topic != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Topic)))
+		i += copy(dAtA[i:], *m.Topic)
+	}
+	if m.Data != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
+		i += copy(dAtA[i:], m.Data)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *PSMessage) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3136,70 +3232,65 @@ func (m *PSMessage) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PSMessage) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PSMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Key != nil {
-		i -= len(m.Key)
-		copy(dAtA[i:], m.Key)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Key)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if m.Signature != nil {
-		i -= len(m.Signature)
-		copy(dAtA[i:], m.Signature)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Signature)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.TopicIDs) > 0 {
-		for iNdEx := len(m.TopicIDs) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.TopicIDs[iNdEx])
-			copy(dAtA[i:], m.TopicIDs[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.TopicIDs[iNdEx])))
-			i--
-			dAtA[i] = 0x22
-		}
-	}
-	if m.Seqno != nil {
-		i -= len(m.Seqno)
-		copy(dAtA[i:], m.Seqno)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Seqno)))
-		i--
-		dAtA[i] = 0x1a
+	if m.From != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.From)))
+		i += copy(dAtA[i:], m.From)
 	}
 	if m.Data != nil {
-		i -= len(m.Data)
-		copy(dAtA[i:], m.Data)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
-		i--
 		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
+		i += copy(dAtA[i:], m.Data)
 	}
-	if m.From != nil {
-		i -= len(m.From)
-		copy(dAtA[i:], m.From)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.From)))
-		i--
-		dAtA[i] = 0xa
+	if m.Seqno != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Seqno)))
+		i += copy(dAtA[i:], m.Seqno)
 	}
-	return len(dAtA) - i, nil
+	if len(m.TopicIDs) > 0 {
+		for _, s := range m.TopicIDs {
+			dAtA[i] = 0x22
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
+	}
+	if m.Signature != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Signature)))
+		i += copy(dAtA[i:], m.Signature)
+	}
+	if m.Key != nil {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Key)))
+		i += copy(dAtA[i:], m.Key)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *PSResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3207,44 +3298,43 @@ func (m *PSResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PSResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PSResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
+	if len(m.Topics) > 0 {
+		for _, s := range m.Topics {
+			dAtA[i] = 0xa
+			i++
+			l = len(s)
+			for l >= 1<<7 {
+				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
+				l >>= 7
+				i++
+			}
+			dAtA[i] = uint8(l)
+			i++
+			i += copy(dAtA[i:], s)
+		}
 	}
 	if len(m.PeerIDs) > 0 {
-		for iNdEx := len(m.PeerIDs) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.PeerIDs[iNdEx])
-			copy(dAtA[i:], m.PeerIDs[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.PeerIDs[iNdEx])))
-			i--
+		for _, b := range m.PeerIDs {
 			dAtA[i] = 0x12
+			i++
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
+			i += copy(dAtA[i:], b)
 		}
 	}
-	if len(m.Topics) > 0 {
-		for iNdEx := len(m.Topics) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Topics[iNdEx])
-			copy(dAtA[i:], m.Topics[iNdEx])
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Topics[iNdEx])))
-			i--
-			dAtA[i] = 0xa
-		}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 
 func (m *CallUnaryRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3252,53 +3342,44 @@ func (m *CallUnaryRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CallUnaryRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CallUnaryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	if m.Data == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("data")
+	if m.Peer == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		i -= len(m.Data)
-		copy(dAtA[i:], m.Data)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
-		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
 	}
 	if m.Proto == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
 	} else {
-		i -= len(*m.Proto)
-		copy(dAtA[i:], *m.Proto)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
-		i--
 		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
+		i += copy(dAtA[i:], *m.Proto)
 	}
-	if m.Peer == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+	if m.Data == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("data")
 	} else {
-		i -= len(m.Peer)
-		copy(dAtA[i:], m.Peer)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
+		i += copy(dAtA[i:], m.Data)
 	}
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *CallUnaryResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3306,67 +3387,47 @@ func (m *CallUnaryResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CallUnaryResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CallUnaryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
 	if m.Result != nil {
-		{
-			size := m.Result.Size()
-			i -= size
-			if _, err := m.Result.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
+		nn24, err24 := m.Result.MarshalTo(dAtA[i:])
+		if err24 != nil {
+			return 0, err24
 		}
+		i += nn24
 	}
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *CallUnaryResponse_Response) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CallUnaryResponse_Response) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.Response != nil {
-		i -= len(m.Response)
-		copy(dAtA[i:], m.Response)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Response)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Response)))
+		i += copy(dAtA[i:], m.Response)
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *CallUnaryResponse_Error) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CallUnaryResponse_Error) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	i := 0
 	if m.Error != nil {
-		i -= len(m.Error)
-		copy(dAtA[i:], m.Error)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Error)))
-		i--
 		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Error)))
+		i += copy(dAtA[i:], m.Error)
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 func (m *AddUnaryHandlerRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3374,35 +3435,40 @@ func (m *AddUnaryHandlerRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *AddUnaryHandlerRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *AddUnaryHandlerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
 	if m.Proto == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
 	} else {
-		i -= len(*m.Proto)
-		copy(dAtA[i:], *m.Proto)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
+		i += copy(dAtA[i:], *m.Proto)
 	}
-	return len(dAtA) - i, nil
+	if m.Balanced == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("balanced")
+	} else {
+		dAtA[i] = 0x10
+		i++
+		if *m.Balanced {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *DaemonError) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3410,33 +3476,26 @@ func (m *DaemonError) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DaemonError) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *DaemonError) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
-	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
-	}
 	if m.Message != nil {
-		i -= len(*m.Message)
-		copy(dAtA[i:], *m.Message)
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Message)))
-		i--
 		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Message)))
+		i += copy(dAtA[i:], *m.Message)
 	}
-	return len(dAtA) - i, nil
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
 }
 
 func (m *Cancel) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	n, err := m.MarshalTo(dAtA)
 	if err != nil {
 		return nil, err
 	}
@@ -3444,32 +3503,24 @@ func (m *Cancel) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Cancel) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Cancel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
+	var i int
 	_ = i
 	var l int
 	_ = l
 	if m.XXX_unrecognized != nil {
-		i -= len(m.XXX_unrecognized)
-		copy(dAtA[i:], m.XXX_unrecognized)
+		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	return len(dAtA) - i, nil
+	return i, nil
 }
 
 func encodeVarintP2Pd(dAtA []byte, offset int, v uint64) int {
-	offset -= sovP2Pd(v)
-	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return base
+	return offset + 1
 }
 func (m *Request) Size() (n int) {
 	if m == nil {
@@ -3776,6 +3827,9 @@ func (m *StreamHandlerRequest) Size() (n int) {
 			l = len(s)
 			n += 1 + l + sovP2Pd(uint64(l))
 		}
+	}
+	if m.Balanced != nil {
+		n += 2
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -4104,6 +4158,9 @@ func (m *AddUnaryHandlerRequest) Size() (n int) {
 	if m.Proto != nil {
 		l = len(*m.Proto)
 		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Balanced != nil {
+		n += 2
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -4454,7 +4511,10 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4744,7 +4804,10 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4974,7 +5037,10 @@ func (m *PersistentConnectionRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5204,7 +5270,10 @@ func (m *PersistentConnectionResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5326,7 +5395,10 @@ func (m *IdentifyResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5468,7 +5540,10 @@ func (m *ConnectRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5610,7 +5685,10 @@ func (m *StreamOpenRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5726,13 +5804,38 @@ func (m *StreamHandlerRequest) Unmarshal(dAtA []byte) error {
 			}
 			m.Proto = append(m.Proto, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Balanced", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			b := bool(v != 0)
+			m.Balanced = &b
+			hasFields[0] |= uint64(0x00000002)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipP2Pd(dAtA[iNdEx:])
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5744,6 +5847,9 @@ func (m *StreamHandlerRequest) Unmarshal(dAtA []byte) error {
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
 		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
+	}
+	if hasFields[0]&uint64(0x00000002) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("balanced")
 	}
 
 	if iNdEx > l {
@@ -5821,7 +5927,10 @@ func (m *ErrorResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5980,7 +6089,10 @@ func (m *StreamInfo) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -6238,7 +6350,10 @@ func (m *DHTRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -6384,7 +6499,10 @@ func (m *DHTResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -6506,7 +6624,10 @@ func (m *PeerInfo) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -6669,7 +6790,10 @@ func (m *ConnManagerRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -6759,7 +6883,10 @@ func (m *DisconnectRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -6902,7 +7029,10 @@ func (m *PSRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7158,7 +7288,10 @@ func (m *PSMessage) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7273,7 +7406,10 @@ func (m *PSResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7429,7 +7565,10 @@ func (m *CallUnaryRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7555,7 +7694,10 @@ func (m *CallUnaryResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7635,13 +7777,38 @@ func (m *AddUnaryHandlerRequest) Unmarshal(dAtA []byte) error {
 			m.Proto = &s
 			iNdEx = postIndex
 			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Balanced", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			b := bool(v != 0)
+			m.Balanced = &b
+			hasFields[0] |= uint64(0x00000002)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipP2Pd(dAtA[iNdEx:])
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7653,6 +7820,9 @@ func (m *AddUnaryHandlerRequest) Unmarshal(dAtA []byte) error {
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
 		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
+	}
+	if hasFields[0]&uint64(0x00000002) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("balanced")
 	}
 
 	if iNdEx > l {
@@ -7728,7 +7898,10 @@ func (m *DaemonError) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7779,7 +7952,10 @@ func (m *Cancel) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -7798,7 +7974,6 @@ func (m *Cancel) Unmarshal(dAtA []byte) error {
 func skipP2Pd(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
-	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -7830,8 +8005,10 @@ func skipP2Pd(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
+			return iNdEx, nil
 		case 1:
 			iNdEx += 8
+			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -7852,30 +8029,55 @@ func skipP2Pd(dAtA []byte) (n int, err error) {
 				return 0, ErrInvalidLengthP2Pd
 			}
 			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupP2Pd
+			if iNdEx < 0 {
+				return 0, ErrInvalidLengthP2Pd
 			}
-			depth--
+			return iNdEx, nil
+		case 3:
+			for {
+				var innerWire uint64
+				var start int = iNdEx
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return 0, ErrIntOverflowP2Pd
+					}
+					if iNdEx >= l {
+						return 0, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					innerWire |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				innerWireType := int(innerWire & 0x7)
+				if innerWireType == 4 {
+					break
+				}
+				next, err := skipP2Pd(dAtA[start:])
+				if err != nil {
+					return 0, err
+				}
+				iNdEx = start + next
+				if iNdEx < 0 {
+					return 0, ErrInvalidLengthP2Pd
+				}
+			}
+			return iNdEx, nil
+		case 4:
+			return iNdEx, nil
 		case 5:
 			iNdEx += 4
+			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthP2Pd
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
 	}
-	return 0, io.ErrUnexpectedEOF
+	panic("unreachable")
 }
 
 var (
-	ErrInvalidLengthP2Pd        = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowP2Pd          = fmt.Errorf("proto: integer overflow")
-	ErrUnexpectedEndOfGroupP2Pd = fmt.Errorf("proto: unexpected end of group")
+	ErrInvalidLengthP2Pd = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowP2Pd   = fmt.Errorf("proto: integer overflow")
 )

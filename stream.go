@@ -8,6 +8,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/network"
 
 	ggio "github.com/gogo/protobuf/io"
+	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 )
 
@@ -35,14 +36,15 @@ func (d *Daemon) handleStream(s network.Stream) {
 	p := s.Protocol()
 
 	d.mx.Lock()
-	maddr, ok := d.handlers[p]
-	d.mx.Unlock()
-
+	maddrs, ok := d.handlers[p]
 	if !ok {
+		d.mx.Unlock()
 		log.Debugw("unexpected stream", "protocol", p)
 		s.Reset()
 		return
 	}
+	maddr := maddrs.Next().(ma.Multiaddr)
+	d.mx.Unlock()
 
 	c, err := manet.Dial(maddr)
 	if err != nil {
