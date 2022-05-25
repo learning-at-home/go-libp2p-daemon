@@ -132,12 +132,14 @@ func (c *Client) AddUnaryHandler(proto protocol.ID, handler UnaryHandlerFunc) er
 
 	callID := uuid.New()
 
+	balanced := false
 	w.WriteMsg(
 		&pb.PersistentConnectionRequest{
 			CallId: callID[:],
 			Message: &pb.PersistentConnectionRequest_AddUnaryHandler{
 				AddUnaryHandler: &pb.AddUnaryHandlerRequest{
 					Proto: (*string)(&proto),
+					Balanced: &balanced,
 				},
 			},
 		},

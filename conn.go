@@ -278,7 +278,7 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 			d.handlers[p] = utils.NewRoundRobin()
 			d.handlers[p].Push(maddr)
 			d.host.SetStreamHandler(p, d.handleStream)
-		} else if !*req.StreamHandler.Balanced {
+		} else if req.StreamHandler.Balanced == nil || !*req.StreamHandler.Balanced {
 			return errorResponseString(fmt.Sprintf("handler for protocol %s already set", p))
 		} else {
 			d.handlers[p].Push(maddr)

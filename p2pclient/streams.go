@@ -204,11 +204,13 @@ func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) er
 	defer c.mhandlers.Unlock()
 
 	w := ggio.NewDelimitedWriter(control)
+	balanced := false
 	req := &pb.Request{
 		Type: pb.Request_STREAM_HANDLER.Enum(),
 		StreamHandler: &pb.StreamHandlerRequest{
 			Addr:  c.listenMaddr.Bytes(),
 			Proto: protos,
+			Balanced: &balanced,
 		},
 	}
 	if err := w.WriteMsg(req); err != nil {
