@@ -117,7 +117,7 @@ func (d *Daemon) doAddUnaryHandler(w ggio.Writer, callID uuid.UUID, req *pb.AddU
 		d.registeredUnaryProtocols[p] = utils.NewRoundRobin()
 		d.registeredUnaryProtocols[p].Push(w)
 		d.host.SetStreamHandler(p, d.persistentStreamHandler)
-	} else if req.Balanced == nil || !*req.Balanced {
+	} else if !req.GetBalanced() {
 		return errorUnaryCallString(
 			callID,
 			fmt.Sprintf("handler for protocol %s already set", *req.Proto),
