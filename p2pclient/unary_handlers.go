@@ -127,12 +127,11 @@ func (c *Client) getResponse(callID uuid.UUID) (*pb.PersistentConnectionResponse
 	return response, nil
 }
 
-func (c *Client) AddUnaryHandler(proto protocol.ID, handler UnaryHandlerFunc) error {
+func (c *Client) AddUnaryHandler(proto protocol.ID, handler UnaryHandlerFunc, balanced bool) error {
 	w := c.getPersistentWriter()
 
 	callID := uuid.New()
 
-	balanced := false
 	w.WriteMsg(
 		&pb.PersistentConnectionRequest{
 			CallId: callID[:],

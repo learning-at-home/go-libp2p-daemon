@@ -94,7 +94,7 @@ func TestStreams(t *testing.T) {
 			t.Fatalf(`expected "test", got "%s"`, string(buf))
 		}
 		done <- struct{}{}
-	})
+	}, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -117,4 +117,81 @@ func TestStreams(t *testing.T) {
 		t.Fatal("timed out waiting for stream result")
 	}
 	conn.Close()
+}
+
+func TestBalancedStreams(t *testing.T) {
+	d1, c1, closer1 := createDaemonClientPair(t)
+	defer closer1()
+	d2, c2, closer2 := createDaemonClientPair(t)
+	defer closer2()
+	if err := connect(c1, d2); err != nil {
+		t.Fatal(err)
+	}
+	_, cmaddr, dirCloser := getEndpointsMaker(t)(t)
+	c3, closer3 := createClient(t, d1.Listener().Multiaddr(), cmaddr)
+	defer func() {
+		closer3()
+		dirCloser()
+	}()
+	if err := connect(c3, d2); err != nil {
+		t.Fatal(err)
+	}
+
+	testprotos := []string{"/test"}
+
+	done := make(chan int)
+	testHandler := func(x int) func(*p2pclient.StreamInfo, io.ReadWriteCloser) {
+		return func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
+			defer conn.Close()
+			buf := make([]byte, 1024)
+			n, err := conn.Read(buf)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if n != 4 {
+				t.Fatalf("expected to read 4 bytes, %d: %s", n, string(buf))
+			}
+			if string(buf[0:4]) != "test" {
+				t.Fatalf(`expected "test", got "%s"`, string(buf))
+			}
+			time.Sleep(50 * time.Millisecond)
+			done <- x
+		}
+	}
+	err := c1.NewStreamHandler(testprotos, testHandler(1), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = c3.NewStreamHandler(testprotos, testHandler(2), true)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	control := 1 ^ 2
+	for i := 0; i < 2; i++ {
+		_, conn, err := c2.NewStream(d1.ID(), testprotos)
+		if err != nil {
+			t.Fatal(err)
+		}
+		n, err := conn.Write([]byte("test"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if n != 4 {
+			t.Fatal("wrote wrong # of bytes")
+		}
+		conn.Close()
+	}
+
+	for i := 0; i < 2; i++ {
+		select {
+		case x := <-done:
+			control ^= x
+		case <-time.After(1 * time.Second):
+			t.Fatal("timed out waiting for stream result")
+		}
+	}
+	if control != 0 {
+		t.Fatalf("daemon did not balanced handlers %d", control)
+	}
 }
