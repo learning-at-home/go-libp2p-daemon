@@ -207,8 +207,8 @@ func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc, ba
 	req := &pb.Request{
 		Type: pb.Request_STREAM_HANDLER.Enum(),
 		StreamHandler: &pb.StreamHandlerRequest{
-			Addr:  c.listenMaddr.Bytes(),
-			Proto: protos,
+			Addr:     c.listenMaddr.Bytes(),
+			Proto:    protos,
 			Balanced: &balanced,
 		},
 	}

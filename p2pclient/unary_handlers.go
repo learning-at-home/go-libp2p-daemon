@@ -137,7 +137,7 @@ func (c *Client) AddUnaryHandler(proto protocol.ID, handler UnaryHandlerFunc, ba
 			CallId: callID[:],
 			Message: &pb.PersistentConnectionRequest_AddUnaryHandler{
 				AddUnaryHandler: &pb.AddUnaryHandlerRequest{
-					Proto: (*string)(&proto),
+					Proto:    (*string)(&proto),
 					Balanced: &balanced,
 				},
 			},
