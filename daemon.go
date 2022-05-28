@@ -37,11 +37,12 @@ type Daemon struct {
 	pubsub *ps.PubSub
 
 	mx sync.Mutex
-	// stream handlers: map of protocol.ID to multi-address
+	// stream handlers: map of protocol.ID to multi-addresses, balanced by round robin
 	handlers map[protocol.ID]*utils.RoundRobin
 	// closed is set when the daemon is shutting down
 	closed bool
 
+	// unary protocols handlers: map of protocol.ID to wirte ends of pipe, balanced by round robin
 	registeredUnaryProtocols map[protocol.ID]*utils.RoundRobin
 
 	// callID (int64) to chan *pb.PersistentConnectionResponse
