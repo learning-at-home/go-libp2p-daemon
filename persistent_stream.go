@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"sync"
 
 	"github.com/google/uuid"
 	"github.com/libp2p/go-libp2p-core/network"
@@ -16,9 +15,9 @@ import (
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 )
 
-func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser, clearWatcher *sync.Once) {
+func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
 	var streamHandlers []string
-	defer clearWatcher.Do(func() {
+	defer func() {
 		d.mx.Lock()
 		defer d.mx.Unlock()
 		for _, proto := range streamHandlers {
@@ -26,7 +25,7 @@ func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser, c
 			d.host.RemoveStreamHandler(p)
 			delete(d.registeredUnaryProtocols, p)
 		}
-	})
+	}()
 
 	if d.cancelTerminateTimer != nil {
 		d.cancelTerminateTimer()
@@ -224,13 +223,16 @@ func (d *Daemon) persistentStreamHandler(s network.Stream) {
 
 	d.mx.Lock()
 	cws, ok := d.registeredUnaryProtocols[p]
+	var cw ggio.Writer
+	if ok {
+		cw = cws.Next().(ggio.Writer)
+	}
+	d.mx.Unlock()
+
 	if !ok {
-		d.mx.Unlock()
 		log.Debugw("unexpected persistent stream", "protocol", p)
 		return
 	}
-	cw := cws.Next().(ggio.Writer)
-	d.mx.Unlock()
 
 	req := &pb.PersistentConnectionRequest{}
 	if err := ggio.NewDelimitedReader(s, d.persistentConnMsgMaxSize).ReadMsg(req); err != nil {

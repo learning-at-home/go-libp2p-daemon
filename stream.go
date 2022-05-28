@@ -37,14 +37,17 @@ func (d *Daemon) handleStream(s network.Stream) {
 
 	d.mx.Lock()
 	maddrs, ok := d.handlers[p]
+	var maddr ma.Multiaddr
+	if ok {
+		maddr = maddrs.Next().(ma.Multiaddr)
+	}
+	d.mx.Unlock()
+
 	if !ok {
-		d.mx.Unlock()
 		log.Debugw("unexpected stream", "protocol", p)
 		s.Reset()
 		return
 	}
-	maddr := maddrs.Next().(ma.Multiaddr)
-	d.mx.Unlock()
 
 	c, err := manet.Dial(maddr)
 	if err != nil {

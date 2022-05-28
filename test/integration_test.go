@@ -120,27 +120,25 @@ func TestStreams(t *testing.T) {
 }
 
 func TestBalancedStreams(t *testing.T) {
-	d1, c1, closer1 := createDaemonClientPair(t)
+	handlerDaemon, handlerClient1, closer1 := createDaemonClientPair(t)
 	defer closer1()
-	d2, c2, closer2 := createDaemonClientPair(t)
-	defer closer2()
-	if err := connect(c1, d2); err != nil {
-		t.Fatal(err)
-	}
 	_, cmaddr, dirCloser := getEndpointsMaker(t)(t)
-	c3, closer3 := createClient(t, d1.Listener().Multiaddr(), cmaddr)
+	handlerClient2, closer2 := createClient(t, handlerDaemon.Listener().Multiaddr(), cmaddr)
 	defer func() {
-		closer3()
+		closer2()
 		dirCloser()
 	}()
-	if err := connect(c3, d2); err != nil {
+	_, callerClient, callerCloser := createDaemonClientPair(t)
+	defer callerCloser()
+
+	if err := connect(callerClient, handlerDaemon); err != nil {
 		t.Fatal(err)
 	}
 
 	testprotos := []string{"/test"}
 
 	done := make(chan int)
-	testHandler := func(x int) func(*p2pclient.StreamInfo, io.ReadWriteCloser) {
+	makeHandler := func(x int) p2pclient.StreamHandlerFunc {
 		return func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
 			defer conn.Close()
 			buf := make([]byte, 1024)
@@ -158,18 +156,18 @@ func TestBalancedStreams(t *testing.T) {
 			done <- x
 		}
 	}
-	err := c1.NewStreamHandler(testprotos, testHandler(1), true)
+	err := handlerClient1.NewStreamHandler(testprotos, makeHandler(1), true)
 	if err != nil {
 		t.Fatal(err)
 	}
-	err = c3.NewStreamHandler(testprotos, testHandler(2), true)
+	err = handlerClient2.NewStreamHandler(testprotos, makeHandler(-1), true)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	control := 1 ^ 2
-	for i := 0; i < 2; i++ {
-		_, conn, err := c2.NewStream(d1.ID(), testprotos)
+	control := 0
+	for i := 0; i < 10; i++ {
+		_, conn, err := callerClient.NewStream(handlerDaemon.ID(), testprotos)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -183,10 +181,10 @@ func TestBalancedStreams(t *testing.T) {
 		conn.Close()
 	}
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 10; i++ {
 		select {
 		case x := <-done:
-			control ^= x
+			control += x
 		case <-time.After(1 * time.Second):
 			t.Fatal("timed out waiting for stream result")
 		}

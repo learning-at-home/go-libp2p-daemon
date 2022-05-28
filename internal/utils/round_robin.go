@@ -1,7 +1,5 @@
 package utils
 
-// TODO: use go 1.18 and generics
-
 type RoundRobin struct {
 	data []interface{}
 	next int

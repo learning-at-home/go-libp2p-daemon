@@ -207,11 +207,11 @@ func TestBalancedCall(t *testing.T) {
 	dmaddr, c1maddr, dir1Closer := getEndpointsMaker(t)(t)
 	_, c2maddr, dir2Closer := getEndpointsMaker(t)(t)
 
-	daemon, closeDaemon := createDaemon(t, dmaddr)
+	handlerDaemon, closeDaemon := createDaemon(t, dmaddr)
 
-	c1, closeClient1 := createClient(t, daemon.Listener().Multiaddr(), c1maddr)
-	c2, closeClient2 := createClient(t, daemon.Listener().Multiaddr(), c2maddr)
-	_, c3, cancel3 := createDaemonClientPair(t)
+	handlerClient1, closeClient1 := createClient(t, handlerDaemon.Listener().Multiaddr(), c1maddr)
+	handlerClient2, closeClient2 := createClient(t, handlerDaemon.Listener().Multiaddr(), c2maddr)
+	_, callerClient, callerClose := createDaemonClientPair(t)
 	defer func() {
 		closeClient1()
 		closeClient2()
@@ -220,37 +220,37 @@ func TestBalancedCall(t *testing.T) {
 
 		dir1Closer()
 		dir2Closer()
-		cancel3()
+		callerClose()
 	}()
 
-	if err := c3.Connect(daemon.ID(), daemon.Addrs()); err != nil {
+	if err := callerClient.Connect(handlerDaemon.ID(), handlerDaemon.Addrs()); err != nil {
 		t.Fatal(err)
 	}
 
 	var proto protocol.ID = "test"
-	done := make(chan int, 2)
+	done := make(chan int, 10)
 
-	if err := c1.AddUnaryHandler(proto, getNumberedHandler(done, 1, t), true); err != nil {
+	if err := handlerClient1.AddUnaryHandler(proto, getNumberedHandler(done, 1, t), true); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := c2.AddUnaryHandler(proto, getNumberedHandler(done, 2, t), true); err != nil {
+	if err := handlerClient2.AddUnaryHandler(proto, getNumberedHandler(done, -1, t), true); err != nil {
 		t.Fatal(err)
 	}
 
-	for i := 0; i < 2; i++ {
-		_, err := c3.CallUnaryHandler(context.Background(), daemon.ID(), proto, []byte("test"))
+	for i := 0; i < 10; i++ {
+		_, err := callerClient.CallUnaryHandler(context.Background(), handlerDaemon.ID(), proto, []byte("test"))
 		if err != nil {
 			t.Fatal(err.Error())
 		}
 	}
 
-	control := 1 ^ 2
+	control := 0
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 10; i++ {
 		select {
 		case x := <-done:
-			control ^= x
+			control += x
 		case <-time.After(1 * time.Second):
 			t.Fatal("timed out waiting for stream result")
 		}

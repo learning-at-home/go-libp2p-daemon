@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net"
-	"sync"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/network"
@@ -150,8 +149,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			}
 
 		case pb.Request_PERSISTENT_CONN_UPGRADE:
-			var clearUp sync.Once
-			d.handlePersistentConn(r, w, &clearUp)
+			d.handlePersistentConn(r, w)
 			return
 
 		default:
