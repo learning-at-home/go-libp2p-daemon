@@ -6,7 +6,7 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	pb "github.com/chiangmaioneluv/go-libp2p-daemon/blob/master/pb"
 )
 
 func (d *Daemon) doConnManager(req *pb.Request) *pb.Response {

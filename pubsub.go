@@ -1,7 +1,7 @@
 package p2pd
 
 import (
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	pb "github.com/chiangmaioneluv/go-libp2p-daemon/blob/master/pb"
 
 	"github.com/libp2p/go-libp2p/core/peer"
 

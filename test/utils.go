@@ -20,7 +20,7 @@ import (
 	cid "github.com/ipfs/go-cid"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	pb "github.com/chiangmaioneluv/go-libp2p-daemon/blob/master/pb"
 	ma "github.com/multiformats/go-multiaddr"
 	mh "github.com/multiformats/go-multihash"
 )
