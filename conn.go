@@ -12,7 +12,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/protocol"
 
 	"github.com/libp2p/go-libp2p-daemon/internal/utils"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	pb "github.com/chiangmaioneluv/go-libp2p-daemon/blob/master/pb"
 
 	ggio "github.com/gogo/protobuf/io"
 	ma "github.com/multiformats/go-multiaddr"
@@ -159,6 +159,14 @@ func (d *Daemon) handleConn(c net.Conn) {
 		case pb.Request_PERSISTENT_CONN_UPGRADE:
 			d.handlePersistentConn(r, w)
 			return
+		
+		case pb.Request_BANDWIDTH_INFO:
+			res := d.doBandwidthInfo()
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugw("error writing response", "error", err)
+				return
+			}
 
 		default:
 			log.Debugw("unexpected request type", "type", req.GetType())
@@ -340,6 +348,12 @@ func (d *Daemon) doListPeers(req *pb.Request) *pb.Response {
 
 	res := okResponse()
 	res.Peers = peers
+	return res
+}
+
+func (d *Daemon) doBandwidthInfo() *pb.Response {
+	res := okResponse()
+	res.Bandwidth = pb.Bandwidth{value: 42}
 	return res
 }
 
