@@ -11,7 +11,7 @@ import (
 
 	ggio "github.com/gogo/protobuf/io"
 	"github.com/libp2p/go-libp2p-daemon/internal/utils"
-	pb "github.com/chiangmaioneluv/go-libp2p-daemon/blob/master/pb"
+	pb "github.com/chiangmaioneluv/go-libp2p-daemon/pb"
 	"github.com/libp2p/go-libp2p/core/protocol"
 )
 

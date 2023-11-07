@@ -11,7 +11,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
-	pb "github.com/chiangmaioneluv/go-libp2p-daemon/blob/master/pb"
+	pb "github.com/chiangmaioneluv/go-libp2p-daemon/pb"
 )
 
 func clientRequestAsync(t *testing.T, client *p2pclient.Client, method string, arg interface{}) interface{} {
