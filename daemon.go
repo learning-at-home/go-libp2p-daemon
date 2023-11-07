@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/libp2p/go-libp2p-daemon/config"
-	"github.com/libp2p/go-libp2p-daemon/internal/utils"
+	"github.com/chiangmaioneluv/go-libp2p-daemon/internal/utils"
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"
