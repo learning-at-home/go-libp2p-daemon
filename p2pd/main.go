@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"log"
 	"net/http"
 	"os"
@@ -126,7 +126,7 @@ func main() {
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)
-		body, err := ioutil.ReadAll(stdin)
+		body, err := os.ReadAll(stdin)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -134,7 +134,7 @@ func main() {
 			log.Fatal(err)
 		}
 	} else if *configFilename != "" {
-		body, err := ioutil.ReadFile(*configFilename)
+		body, err := os.ReadFile(*configFilename)
 		if err != nil {
 			log.Fatal(err)
 		}
