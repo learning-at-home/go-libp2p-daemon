@@ -1,7 +1,7 @@
 package p2pd
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/libp2p/go-libp2p/core/crypto"
 )
@@ -21,5 +21,5 @@ func WriteIdentity(k crypto.PrivKey, path string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(path, bytes, 0400)
+	return os.WriteFile(path, bytes, 0400)
 }
