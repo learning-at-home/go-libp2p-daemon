@@ -1,6 +1,6 @@
 module github.com/learning-at-home/go-libp2p-daemon
 
-go 1.18
+go 1.20
 
 require (
 	github.com/cenkalti/backoff/v4 v4.2.0
