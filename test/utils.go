@@ -26,7 +26,7 @@ import (
 
 func createTempDir(t *testing.T) (string, string, func()) {
 	root := os.TempDir()
-	dir, err := os.TempDir(root, "p2pd")
+	dir, err := os.MkdirTemp(root, "p2pd")
 	if err != nil {
 		t.Fatalf("creating temp dir: %s", err)
 	}
