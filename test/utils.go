@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -27,7 +26,7 @@ import (
 
 func createTempDir(t *testing.T) (string, string, func()) {
 	root := os.TempDir()
-	dir, err := ioutil.TempDir(root, "p2pd")
+	dir, err := os.TempDir(root, "p2pd")
 	if err != nil {
 		t.Fatalf("creating temp dir: %s", err)
 	}
