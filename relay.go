@@ -38,15 +38,14 @@ func MaybeConfigureAutoRelay(opts []libp2p.Option, relayDiscovery bool, trustedR
 	if !relayDiscovery && len(trustedRelays) > 0 {
 		log.Debugf("Running with static relays only: %v\n", trustedRelays)
 		// static relays, no automatic discovery
-		opts = append(opts, libp2p.EnableAutoRelay(
-			autorelay.WithStaticRelays(parseRelays(trustedRelays)),
+		opts = append(opts, libp2p.EnableAutoRelayWithStaticRelays(
+			parseRelays(trustedRelays),
 		))
 	} else if relayDiscovery {
 		log.Debug("Running with automatic relay discovery\n")
 		peerSourceChan = make(chan peer.AddrInfo)
 		// requires daemon to BeginRelayDiscovery once it is initialized
-		opts = append(opts, libp2p.EnableAutoRelay(
-			autorelay.WithPeerSource(func(ctx context.Context, numPeers int) <-chan peer.AddrInfo {
+		opts = append(opts, libp2p.EnableAutoRelayWithPeerSource(func(ctx context.Context, numPeers int) <-chan peer.AddrInfo {
 				r := make(chan peer.AddrInfo)
 				go func() {
 					defer close(r)
@@ -67,7 +66,7 @@ func MaybeConfigureAutoRelay(opts []libp2p.Option, relayDiscovery bool, trustedR
 					}
 				}()
 				return r
-			})))
+			}))
 	} else {
 		log.Debug("Running without autorelay\n")
 	}
