@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"os"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -126,7 +126,7 @@ func main() {
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)
-		body, err := os.ReadAll(stdin)
+		body, err := io.ReadAll(stdin)
 		if err != nil {
 			log.Fatal(err)
 		}
