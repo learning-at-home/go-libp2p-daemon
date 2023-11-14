@@ -12,7 +12,6 @@ import (
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
 	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	"github.com/cenkalti/backoff/v4"
@@ -46,27 +45,27 @@ func MaybeConfigureAutoRelay(opts []libp2p.Option, relayDiscovery bool, trustedR
 		peerSourceChan = make(chan peer.AddrInfo)
 		// requires daemon to BeginRelayDiscovery once it is initialized
 		opts = append(opts, libp2p.EnableAutoRelayWithPeerSource(func(ctx context.Context, numPeers int) <-chan peer.AddrInfo {
-				r := make(chan peer.AddrInfo)
-				go func() {
-					defer close(r)
-					for ; numPeers != 0; numPeers-- {
+			r := make(chan peer.AddrInfo)
+			go func() {
+				defer close(r)
+				for ; numPeers != 0; numPeers-- {
+					select {
+					case v, ok := <-peerSourceChan:
+						if !ok {
+							return
+						}
 						select {
-						case v, ok := <-peerSourceChan:
-							if !ok {
-								return
-							}
-							select {
-							case r <- v:
-							case <-ctx.Done():
-								return
-							}
+						case r <- v:
 						case <-ctx.Done():
 							return
 						}
+					case <-ctx.Done():
+						return
 					}
-				}()
-				return r
-			}))
+				}
+			}()
+			return r
+		}))
 	} else {
 		log.Debug("Running without autorelay\n")
 	}
