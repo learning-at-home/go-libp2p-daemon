@@ -9,6 +9,7 @@ import (
 
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 
+	
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -40,7 +41,6 @@ func MaybeConfigureAutoRelay(opts []libp2p.Option, relayDiscovery bool, trustedR
 		// static relays, no automatic discovery
 		opts = append(opts, libp2p.EnableAutoRelay(
 			autorelay.WithStaticRelays(parseRelays(trustedRelays)),
-			autorelay.WithCircuitV1Support(),
 		))
 	} else if relayDiscovery {
 		log.Debug("Running with automatic relay discovery\n")
@@ -68,7 +68,7 @@ func MaybeConfigureAutoRelay(opts []libp2p.Option, relayDiscovery bool, trustedR
 					}
 				}()
 				return r
-			}, 0)))
+			})))
 	} else {
 		log.Debug("Running without autorelay\n")
 	}
