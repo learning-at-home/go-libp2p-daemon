@@ -13,6 +13,7 @@ import (
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/metrics"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	"github.com/libp2p/go-libp2p/core/routing"
@@ -64,6 +65,8 @@ type Daemon struct {
 	cancelTerminateTimer context.CancelFunc
 
 	persistentConnMsgMaxSize int
+
+	bandwidth_metrics *metrics.BandwidthCounter
 }
 
 func NewDaemon(
@@ -71,6 +74,7 @@ func NewDaemon(
 	maddr ma.Multiaddr,
 	dhtMode string,
 	relayDiscovery bool,
+	bandwidthMetricsEnabled bool,
 	trustedRelays []string,
 	persistentConnMsgMaxSize int,
 	opts ...libp2p.Option,
@@ -101,6 +105,13 @@ func NewDaemon(
 		opts = append(opts, libp2p.Routing(d.DHTRoutingFactory(dhtOpts)))
 	}
 
+	if bandwidthMetricsEnabled {
+		d.bandwidth_metrics = metrics.NewBandwidthCounter()
+		opts = append(opts, libp2p.BandwidthReporter(d.bandwidth_metrics))
+	} else {
+		d.bandwidth_metrics = nil
+	}
+	
 	h, err := libp2p.New(opts...)
 	if err != nil {
 		return nil, err

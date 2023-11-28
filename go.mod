@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/cenkalti/backoff/v4 v4.2.1
 	github.com/gogo/protobuf v1.3.2
+	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.4.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/ipfs/go-cid v0.4.1
@@ -16,6 +17,7 @@ require (
 	github.com/multiformats/go-multihash v0.2.3
 	github.com/prometheus/client_golang v1.17.0
 	github.com/stretchr/testify v1.8.4
+	google.golang.org/protobuf v1.31.0
 )
 
 require (
@@ -115,7 +117,6 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	gonum.org/v1/gonum v0.14.0 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.2.1 // indirect
 )

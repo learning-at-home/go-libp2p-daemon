@@ -120,6 +120,7 @@ func main() {
 	persistentConnMaxMsgSize := flag.Int("persistentConnMaxMsgSize", 4*1024*1024,
 		"Max size for persistent connection messages (bytes). Default: 4 MiB")
 	muxer := flag.String("muxer", "yamux", "muxer to use for connections")
+	bandwidthMetricsEnabled := flag.Bool("bandwidthMetrics", true, "Enables collection of bandwidth rate metrics")
 
 	flag.Parse()
 
@@ -388,7 +389,7 @@ func main() {
 	// start daemon
 	d, err := p2pd.NewDaemon(
 		defaultCtx, &c.ListenAddr, c.DHT.Mode,
-		c.Relay.Discovery, trustedRelays, *persistentConnMaxMsgSize,
+		c.Relay.Discovery, *bandwidthMetricsEnabled, trustedRelays, *persistentConnMaxMsgSize,
 		opts...)
 	if err != nil {
 		log.Fatal(err)
