@@ -17,7 +17,7 @@ message Request {
     DISCONNECT               = 7;
     PUBSUB                   = 8;
     PERSISTENT_CONN_UPGRADE  = 9;
-    BANDWIDTH_METRICS           = 11;
+    BANDWIDTH_METRICS        = 11;
   }
 
   required Type type = 1;
@@ -59,6 +59,10 @@ message PersistentConnectionRequest {
     CallUnaryResponse unaryResponse = 4;
     Cancel cancel = 5;
   }
+}
+
+message BandwidthResponse {
+  required int64 value = 1;
 }
 
 message PersistentConnectionResponse {
