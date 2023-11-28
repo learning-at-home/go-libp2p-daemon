@@ -6,7 +6,6 @@ import (
 
 	"github.com/libp2p/go-libp2p/core/peer"
 
-
 	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
 )
 

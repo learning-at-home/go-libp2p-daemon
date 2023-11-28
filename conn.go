@@ -3,17 +3,15 @@ package p2pd
 import (
 	"context"
 	"fmt"
-	"io"
-	"net"
-	"time"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
-
+	"io"
+	"net"
+	"time"
 
 	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
-
 
 	ggio "github.com/gogo/protobuf/io"
 	ma "github.com/multiformats/go-multiaddr"
@@ -124,7 +122,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 				log.Debugw("error writing response", "error", err)
 				return
 			}
-		
+
 		case pb.Request_BANDWIDTH_METRICS:
 			res := d.doBandwidthMetrics(&req)
 			err := w.WriteMsg(res)
@@ -351,8 +349,8 @@ func (d *Daemon) doBandwidthMetrics(req *pb.Request) *pb.Response {
 		selfRateOut = stats.RateOut
 	}
 	res := okResponse()
-	res.Bwr = &pb.BandwidthMetricsResponse {
-		SelfRateIn: &selfRateIn,
+	res.Bwr = &pb.BandwidthMetricsResponse{
+		SelfRateIn:  &selfRateIn,
 		SelfRateOut: &selfRateOut,
 	}
 
@@ -391,7 +389,7 @@ func (d *Daemon) doBandwidthMetrics(req *pb.Request) *pb.Response {
 		}
 		res.Bwr.Peers = peers
 	}
-	
+
 	return res
 }
 

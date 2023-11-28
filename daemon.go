@@ -11,7 +11,6 @@ import (
 	"github.com/learning-at-home/go-libp2p-daemon/config"
 	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 
-
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/metrics"
@@ -112,7 +111,7 @@ func NewDaemon(
 	} else {
 		d.bandwidth_metrics = nil
 	}
-	
+
 	h, err := libp2p.New(opts...)
 	if err != nil {
 		return nil, err
