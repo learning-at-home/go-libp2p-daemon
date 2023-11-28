@@ -61,10 +61,6 @@ message PersistentConnectionRequest {
   }
 }
 
-message BandwidthResponse {
-  required int64 value = 1;
-}
-
 message PersistentConnectionResponse {
   required bytes callId = 1;
 
