@@ -17,7 +17,6 @@ require (
 	github.com/multiformats/go-multihash v0.2.3
 	github.com/prometheus/client_golang v1.17.0
 	github.com/stretchr/testify v1.8.4
-	google.golang.org/protobuf v1.31.0
 )
 
 require (
@@ -117,6 +116,7 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	gonum.org/v1/gonum v0.14.0 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.2.1 // indirect
 )
