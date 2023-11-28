@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -16,10 +16,12 @@ import (
 
 	"github.com/libp2p/go-libp2p"
 
-	p2pd "github.com/libp2p/go-libp2p-daemon"
-	config "github.com/libp2p/go-libp2p-daemon/config"
+	p2pd "github.com/learning-at-home/go-libp2p-daemon"
+	config "github.com/learning-at-home/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	network "github.com/libp2p/go-libp2p/core/network"
+
+	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
@@ -117,16 +119,20 @@ func main() {
 			" The zero value (default) disables this feature")
 	persistentConnMaxMsgSize := flag.Int("persistentConnMaxMsgSize", 4*1024*1024,
 		"Max size for persistent connection messages (bytes). Default: 4 MiB")
+	muxer := flag.String("muxer", "yamux", "muxer to use for connections")
 
 	flag.Parse()
 
 	var c config.Config
 	defaultCtx := context.Background() // context used for all streams opened by this daemon
-	opts := []libp2p.Option{libp2p.UserAgent("p2pd/0.1")}
+	opts := []libp2p.Option{
+		libp2p.UserAgent("p2pd/0.1"),
+		libp2p.DefaultTransports,
+	}
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)
-		body, err := ioutil.ReadAll(stdin)
+		body, err := io.ReadAll(stdin)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -134,7 +140,7 @@ func main() {
 			log.Fatal(err)
 		}
 	} else if *configFilename != "" {
-		body, err := ioutil.ReadFile(*configFilename)
+		body, err := os.ReadFile(*configFilename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -257,6 +263,10 @@ func main() {
 		c.Bootstrap.Enabled = true
 	}
 
+	if *muxer == "yamux" {
+		opts = append(opts, libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport))
+	}
+
 	if *quiet {
 		c.Quiet = true
 	}
@@ -347,7 +357,11 @@ func main() {
 	}
 
 	if c.NoListen {
-		opts = append(opts, libp2p.NoListenAddrs)
+		opts = append(opts,
+			libp2p.NoListenAddrs,
+			// NoListenAddrs disables the relay transport
+			libp2p.EnableRelay(),
+		)
 	}
 
 	var securityOpts []libp2p.Option
@@ -398,6 +412,13 @@ func main() {
 		}
 	}
 
+	if c.Relay.Enabled {
+		err = d.EnableRelayV2()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	if len(c.Bootstrap.Peers) > 0 {
 		p2pd.BootstrapPeers = c.Bootstrap.Peers
 	}
@@ -411,7 +432,7 @@ func main() {
 
 	if !c.Quiet {
 		fmt.Printf("Control socket: %s\n", c.ListenAddr.String())
-		fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
+		fmt.Printf("Peer ID: %s\n", d.ID().String())
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {
 			fmt.Printf("%s\n", addr.String())

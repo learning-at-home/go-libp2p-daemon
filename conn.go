@@ -11,8 +11,10 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 
-	"github.com/chiangmaioneluv/go-libp2p-daemon/internal/utils"
-	pb "github.com/chiangmaioneluv/go-libp2p-daemon/pb"
+
+	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
+	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
+
 
 	ggio "github.com/gogo/protobuf/io"
 	ma "github.com/multiformats/go-multiaddr"
@@ -262,6 +264,7 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, network.Stream) {
 	}
 
 	log.Debugf("opening stream", "to", pid)
+	ctx = network.WithUseTransient(ctx, "allow testing over relayed connections")
 	s, err := d.host.NewStream(ctx, pid, protos...)
 	if err != nil {
 		log.Debugw("error opening stream", "to", pid, "error", err)

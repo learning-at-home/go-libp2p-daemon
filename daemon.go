@@ -8,8 +8,9 @@ import (
 	"os"
 	"sync"
 
-	"github.com/libp2p/go-libp2p-daemon/config"
-	"github.com/chiangmaioneluv/go-libp2p-daemon/internal/utils"
+	"github.com/learning-at-home/go-libp2p-daemon/config"
+	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
+
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -17,6 +18,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/protocol"
 	"github.com/libp2p/go-libp2p/core/routing"
 	"github.com/libp2p/go-libp2p/p2p/host/resource-manager"
+	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	multierror "github.com/hashicorp/go-multierror"
 	logging "github.com/ipfs/go-log"
@@ -139,6 +141,11 @@ func (d *Daemon) DHTRoutingFactory(opts []dhtopts.Option) func(host.Host) (routi
 	return makeRouting
 }
 
+func (d *Daemon) EnableRelayV2() error {
+	_, err := relay.New(d.host)
+	return err
+}
+
 func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 	var opts []ps.Option
 
@@ -146,6 +153,8 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 		opts = append(opts, ps.WithMessageSigning(false))
 	} else if !strict {
 		opts = append(opts, ps.WithStrictSignatureVerification(false))
+	} else {
+		opts = append(opts, ps.WithMessageSignaturePolicy(ps.StrictSign))
 	}
 
 	switch router {
