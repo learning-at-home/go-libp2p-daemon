@@ -9,10 +9,10 @@ import (
 
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p/core/host"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	"github.com/chiangmaioneluv/go-libp2p"
+	"github.com/chiangmaioneluv/go-libp2p/core/host"
+	"github.com/chiangmaioneluv/go-libp2p/core/peer"
+	"github.com/chiangmaioneluv/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	"github.com/cenkalti/backoff/v4"
 )

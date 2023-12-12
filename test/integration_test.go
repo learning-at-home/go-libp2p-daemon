@@ -7,16 +7,16 @@ import (
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p/core/protocol"
-	v2client "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/client"
-	v2proto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
-	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	"github.com/chiangmaioneluv/go-libp2p"
+	"github.com/chiangmaioneluv/go-libp2p/core/protocol"
+	v2client "github.com/chiangmaioneluv/go-libp2p/p2p/protocol/circuitv2/client"
+	v2proto "github.com/chiangmaioneluv/go-libp2p/p2p/protocol/circuitv2/proto"
+	"github.com/chiangmaioneluv/go-libp2p/p2p/protocol/identify"
 	"github.com/stretchr/testify/require"
 
 	p2pd "github.com/learning-at-home/go-libp2p-daemon"
 	"github.com/learning-at-home/go-libp2p-daemon/p2pclient"
-	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/chiangmaioneluv/go-libp2p/core/peer"
 	ma "github.com/multiformats/go-multiaddr"
 )
 

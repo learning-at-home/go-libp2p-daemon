@@ -3,13 +3,12 @@ package p2pd
 import (
 	"context"
 	"fmt"
+	"github.com/chiangmaioneluv/go-libp2p/core/network"
+	"github.com/chiangmaioneluv/go-libp2p/core/peer"
+	"github.com/chiangmaioneluv/go-libp2p/core/protocol"
 	"io"
 	"net"
 	"time"
-
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/core/protocol"
 
 	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
@@ -118,6 +117,14 @@ func (d *Daemon) handleConn(c net.Conn) {
 
 		case pb.Request_LIST_PEERS:
 			res := d.doListPeers(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugw("error writing response", "error", err)
+				return
+			}
+
+		case pb.Request_BANDWIDTH_METRICS:
+			res := d.doBandwidthMetrics(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
 				log.Debugw("error writing response", "error", err)
@@ -327,6 +334,63 @@ func (d *Daemon) doRemoveStreamHandler(req *pb.Request) *pb.Response {
 	}
 
 	return okResponse()
+}
+
+func (d *Daemon) doBandwidthMetrics(req *pb.Request) *pb.Response {
+	if d.bandwidth_metrics == nil {
+		log.Debugw("error getting bandwidth metrics: daemon option is off")
+		return errorResponseString("error getting bandwidth metrics: daemon option is off")
+	}
+	selfRateIn := 0.0
+	selfRateOut := 0.0
+	if req.Bwr.GetForSelf() {
+		stats := d.bandwidth_metrics.GetBandwidthTotals()
+		selfRateIn = stats.RateIn
+		selfRateOut = stats.RateOut
+	}
+	res := okResponse()
+	res.Bwr = &pb.BandwidthMetricsResponse{
+		SelfRateIn:  &selfRateIn,
+		SelfRateOut: &selfRateOut,
+	}
+
+	if req.Bwr.GetForAllPeers() {
+		peerStats := d.bandwidth_metrics.GetBandwidthByPeer()
+		peers := make([]*pb.PeerInfo, len(peerStats))
+		i := 0
+		for id, stats := range peerStats {
+			rateIn := stats.RateIn
+			rateOut := stats.RateOut
+			peers[i] = &pb.PeerInfo{
+				Id:      []byte(id),
+				Ratein:  &rateIn,
+				Rateout: &rateOut,
+			}
+			i++
+		}
+		res.Bwr.Peers = peers
+	} else {
+		peers := make([]*pb.PeerInfo, len(req.Bwr.Ids))
+		i := 0
+		for _, id := range req.Bwr.Ids {
+			peer_id, err := peer.IDFromBytes([]byte(id))
+			if err != nil {
+				log.Debugw("error parsing peer ID", "error", err)
+				return errorResponse(err)
+			}
+			stats := d.bandwidth_metrics.GetBandwidthForPeer(peer_id)
+
+			peers[i] = &pb.PeerInfo{
+				Id:      []byte(id),
+				Ratein:  &stats.RateIn,
+				Rateout: &stats.RateOut,
+			}
+			i++
+		}
+		res.Bwr.Peers = peers
+	}
+
+	return res
 }
 
 func (d *Daemon) doListPeers(req *pb.Request) *pb.Response {

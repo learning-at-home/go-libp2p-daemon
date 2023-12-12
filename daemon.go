@@ -11,13 +11,14 @@ import (
 	"github.com/learning-at-home/go-libp2p-daemon/config"
 	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p/core/host"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/core/protocol"
-	"github.com/libp2p/go-libp2p/core/routing"
-	"github.com/libp2p/go-libp2p/p2p/host/resource-manager"
-	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	"github.com/chiangmaioneluv/go-libp2p"
+	"github.com/chiangmaioneluv/go-libp2p/core/host"
+	"github.com/chiangmaioneluv/go-libp2p/core/metrics"
+	"github.com/chiangmaioneluv/go-libp2p/core/peer"
+	"github.com/chiangmaioneluv/go-libp2p/core/protocol"
+	"github.com/chiangmaioneluv/go-libp2p/core/routing"
+	"github.com/chiangmaioneluv/go-libp2p/p2p/host/resource-manager"
+	"github.com/chiangmaioneluv/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	multierror "github.com/hashicorp/go-multierror"
 	logging "github.com/ipfs/go-log"
@@ -64,6 +65,8 @@ type Daemon struct {
 	cancelTerminateTimer context.CancelFunc
 
 	persistentConnMsgMaxSize int
+
+	bandwidth_metrics *metrics.BandwidthCounter
 }
 
 func NewDaemon(
@@ -71,6 +74,7 @@ func NewDaemon(
 	maddr ma.Multiaddr,
 	dhtMode string,
 	relayDiscovery bool,
+	bandwidthMetricsEnabled bool,
 	trustedRelays []string,
 	persistentConnMsgMaxSize int,
 	opts ...libp2p.Option,
@@ -81,7 +85,7 @@ func NewDaemon(
 		registeredUnaryProtocols: make(map[protocol.ID]*utils.RoundRobin),
 		persistentConnMsgMaxSize: persistentConnMsgMaxSize,
 	}
-	// setup resource usage limits; see https://github.com/libp2p/go-libp2p/tree/master/p2p/host/resource-manager
+	// setup resource usage limits; see https://github.com/chiangmaioneluv/go-libp2p/tree/master/p2p/host/resource-manager
 	rm, err := rcmgr.NewResourceManager(rcmgr.NewFixedLimiter(rcmgr.InfiniteLimits))
 	if err != nil {
 		panic(err)
@@ -99,6 +103,13 @@ func NewDaemon(
 		}
 
 		opts = append(opts, libp2p.Routing(d.DHTRoutingFactory(dhtOpts)))
+	}
+
+	if bandwidthMetricsEnabled {
+		d.bandwidth_metrics = metrics.NewBandwidthCounter()
+		opts = append(opts, libp2p.BandwidthReporter(d.bandwidth_metrics))
+	} else {
+		d.bandwidth_metrics = nil
 	}
 
 	h, err := libp2p.New(opts...)

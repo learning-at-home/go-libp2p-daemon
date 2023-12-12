@@ -7,9 +7,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
-	"github.com/libp2p/go-libp2p/core/network"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/core/protocol"
+	"github.com/chiangmaioneluv/go-libp2p/core/network"
+	"github.com/chiangmaioneluv/go-libp2p/core/peer"
+	"github.com/chiangmaioneluv/go-libp2p/core/protocol"
 
 	ggio "github.com/gogo/protobuf/io"
 )
