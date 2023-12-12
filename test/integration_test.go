@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p"
+	"github.com/chiangmaioneluv/go-libp2p"
 	"github.com/chiangmaioneluv/go-libp2p/core/protocol"
 	v2client "github.com/chiangmaioneluv/go-libp2p/p2p/protocol/circuitv2/client"
 	v2proto "github.com/chiangmaioneluv/go-libp2p/p2p/protocol/circuitv2/proto"

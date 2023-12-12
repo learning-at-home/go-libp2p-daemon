@@ -11,7 +11,7 @@ import (
 	"github.com/learning-at-home/go-libp2p-daemon/config"
 	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 
-	"github.com/libp2p/go-libp2p"
+	"github.com/chiangmaioneluv/go-libp2p"
 	"github.com/chiangmaioneluv/go-libp2p/core/host"
 	"github.com/chiangmaioneluv/go-libp2p/core/metrics"
 	"github.com/chiangmaioneluv/go-libp2p/core/peer"
