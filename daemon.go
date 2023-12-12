@@ -12,13 +12,13 @@ import (
 	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 
 	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p/core/host"
-	"github.com/libp2p/go-libp2p/core/metrics"
-	"github.com/libp2p/go-libp2p/core/peer"
-	"github.com/libp2p/go-libp2p/core/protocol"
-	"github.com/libp2p/go-libp2p/core/routing"
-	"github.com/libp2p/go-libp2p/p2p/host/resource-manager"
-	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	"github.com/chiangmaioneluv/go-libp2p/core/host"
+	"github.com/chiangmaioneluv/go-libp2p/core/metrics"
+	"github.com/chiangmaioneluv/go-libp2p/core/peer"
+	"github.com/chiangmaioneluv/go-libp2p/core/protocol"
+	"github.com/chiangmaioneluv/go-libp2p/core/routing"
+	"github.com/chiangmaioneluv/go-libp2p/p2p/host/resource-manager"
+	"github.com/chiangmaioneluv/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	multierror "github.com/hashicorp/go-multierror"
 	logging "github.com/ipfs/go-log"
@@ -85,7 +85,7 @@ func NewDaemon(
 		registeredUnaryProtocols: make(map[protocol.ID]*utils.RoundRobin),
 		persistentConnMsgMaxSize: persistentConnMsgMaxSize,
 	}
-	// setup resource usage limits; see https://github.com/libp2p/go-libp2p/tree/master/p2p/host/resource-manager
+	// setup resource usage limits; see https://github.com/chiangmaioneluv/go-libp2p/tree/master/p2p/host/resource-manager
 	rm, err := rcmgr.NewResourceManager(rcmgr.NewFixedLimiter(rcmgr.InfiniteLimits))
 	if err != nil {
 		panic(err)

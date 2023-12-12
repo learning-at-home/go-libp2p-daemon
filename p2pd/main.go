@@ -19,12 +19,12 @@ import (
 	p2pd "github.com/learning-at-home/go-libp2p-daemon"
 	config "github.com/learning-at-home/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
-	network "github.com/libp2p/go-libp2p/core/network"
+	network "github.com/chiangmaioneluv/go-libp2p/core/network"
 
-	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
-	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
-	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
-	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
+	"github.com/chiangmaioneluv/go-libp2p/p2p/muxer/yamux"
+	connmgr "github.com/chiangmaioneluv/go-libp2p/p2p/net/connmgr"
+	noise "github.com/chiangmaioneluv/go-libp2p/p2p/security/noise"
+	tls "github.com/chiangmaioneluv/go-libp2p/p2p/security/tls"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
